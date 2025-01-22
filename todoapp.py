@@ -1,45 +1,60 @@
-from flask import Flask , render_template,request, redirect,url_for
+from flask import Flask, render_template, request, redirect, url_for
+from flask_sqlalchemy import SQLAlchemy
 
-app = Flask (__name__,template_folder="templates")
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todos.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
-todos = [{"task": "Sample Todo", "done": False}]
+# Before first request function to create the database tables
+#@app.before_first_request
+def before_first_request():
+    db.create_all()  # This will create the tables for the Todo app
 
-@app.route("/")
+# Define the Todo model
+class Todo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    task = db.Column(db.String(200), nullable=False)
+    done = db.Column(db.Boolean, default=False)
+
+    def __repr__(self):
+        return f'<Todo {self.task}>'
+
+@app.route('/')
 def index():
-    return render_template("index.html",todos=todos)
+    todos = Todo.query.all()  # Ensure you're passing todos to the template
+    return render_template("index.html", todos=todos)
 
-@app.route("/add", methods =["POST"])
+@app.route("/add", methods=["POST"])
 def add():
     todo = request.form['todo']
-    todos.append({"task": todo, "done": False})
+    new_todo = Todo(task=todo, done=False)
+    db.session.add(new_todo)
+    db.session.commit()
     return redirect(url_for("index"))
 
-
-@app.route("/edit/<int:index>", methods = ["GET", "POST"])
-def edit(index):
-    todo = todos[index]
+@app.route("/edit/<int:id>", methods=["GET", "POST"])
+def edit(id):
+    todo = Todo.query.get_or_404(id)
     if request.method == "POST":
-        todo ['task'] = request.form['todo']
+        todo.task = request.form['todo']
+        db.session.commit()
         return redirect(url_for("index"))
-    else:
-        return render_template ("edit.html", todo = todo , index = index )
-    
+    return render_template("edit.html", todo=todo, id = id)
 
-
-@app.route("/check/<int:index>")
-def check(index):
-    todos[index]['done'] = not todos [index]['done']
+@app.route("/check/<int:id>")
+def check(id):
+    todo = Todo.query.get_or_404(id)
+    todo.done = not todo.done
+    db.session.commit()
     return redirect(url_for("index"))
 
-
-
-@app.route("/delete/<int:index>")
-def delete(index):
-    del todos[index]
+@app.route("/delete/<int:id>")
+def delete(id):
+    todo = Todo.query.get_or_404(id)
+    db.session.delete(todo)
+    db.session.commit()
     return redirect(url_for("index"))
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)
-

@@ -1,12 +1,19 @@
 <!DOCTYPE html>
-    <head>
-        <meta charset="UTC-8">
-        <title> Title </title>
-    </head>
-    <body>
-    <form action="{{url_for('edit', index=index)}}" method="post">
-        <input type="text" name="todo" value="{{todo ['task']}}">
-        <button type="submit">Save</button>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Todo</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+</head>
+<body>
+    <h1>Edit Todo</h1>
+    <form action="{{ url_for('edit', id=todo.id) }}" method="POST">
+        <label for="todo">Edit Task:</label>
+        <input type="text" id="todo" name="todo" value="{{ todo.task }}" required>
+        <input type="submit" value="Save">
     </form>
-    </body>
+    <br>
+    <a href="{{ url_for('index') }}">Back to Todo List</a>
+</body>
 </html>
