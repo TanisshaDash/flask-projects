@@ -7,7 +7,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 # Before first request function to create the database tables
-#@app.before_first_request
 def before_first_request():
     db.create_all()  # This will create the tables for the Todo app
 
