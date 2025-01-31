@@ -11,7 +11,6 @@ db = SQLAlchemy(app)
 def create_tables():
     db.create_all()
 
-
 # Define the Todo model
 class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
