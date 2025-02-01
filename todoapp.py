@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 import os 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://neondb_owner:npg_Rzfr7dbC8qPM@ep-super-shape-a4mzgvjn.us-east-1.aws.neon.tech/neondb?sslmode=requir'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://neondb_owner:npg_Rzfr7dbC8qPM@ep-super-shape-a4mzgvjn.us-east-1.aws.neon.tech/neondb?sslmode=require'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
