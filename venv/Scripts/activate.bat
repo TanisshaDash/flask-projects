@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\tanis\Downloads\tanu\projects\todo_list_project\FlaskProjects\venv
+set VIRTUAL_ENV=C:\Users\tanis\Downloads\tanu\projects\projects\FlaskProjects\venv
 
 if not defined PROMPT set PROMPT=$P$G
 
