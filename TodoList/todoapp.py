@@ -23,6 +23,7 @@ class Todo(db.Model):
     def __repr__(self):
         return f'<Todo {self.task}>'
 
+
 @app.route('/')
 def index():
     todos = Todo.query.all()  # Ensure you're passing todos to the template
