@@ -72,6 +72,7 @@ def play_game():
     feedback = "Number too SMALL" if guess < target else "Number too BIG"
     return render_template("game.html", username=username, target=target, attempts=attempts, game_over=False, message=feedback)
 
+
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
