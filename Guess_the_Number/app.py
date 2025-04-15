@@ -12,9 +12,20 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('GUESS_DB_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = os.getenv("JWT_SECRET_KEY", "default-secret")
+app.config['JWT_TOKEN_LOCATION'] = ['headers']
+app.config['JWT_COOKIE_SECURE'] = False  # For development only
+app.config['JWT_ACCESS_COOKIE_NAME'] = 'access_token'
+app.config['JWT_HEADER_NAME'] = 'Authorization'
+app.config['JWT_HEADER_TYPE'] = 'Bearer'
 
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
+
+
+@app.route("/debug_users")
+def debug_users():
+    users = User.query.all()
+    return jsonify([{ "id": u.id, "username": u.username } for u in users])
 
 # Models
 class User(db.Model):
@@ -31,36 +42,50 @@ class HighScore(db.Model):
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
-        hashed_pw = generate_password_hash(password)
+        username = request.form.get("username")
+        password = request.form.get("password")
+        print(f"Registering: {username}, {password}")  # Debug
 
+        # Check if the user already exists
         if User.query.filter_by(username=username).first():
+            print("Username already exists.")
             return "Username already exists. Try another."
 
+        hashed_pw = generate_password_hash(password)
         new_user = User(username=username, password=hashed_pw)
         db.session.add(new_user)
         db.session.commit()
+        print("User saved!")
+
         return redirect("/login")
-    
+
     return render_template("register.html")
 
-
-@app.route("/login", methods=["GET", "POST"])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
+    if request.method == "GET":
+        return render_template("login.html")
 
-        user = User.query.filter_by(username=username).first()
-        if user and check_password_hash(user.password, password):
-            token = create_access_token(identity=username)
-            response = make_response(redirect("/"))
-            response.set_cookie("access_token", token)
-            return response
-        return "Invalid credentials."
-    
-    return render_template("login.html")
+    # POST request from JavaScript fetch or form
+    if request.is_json:
+        data = request.get_json()
+        username = data.get('username')
+        password = data.get('password')
+    else:
+        # If sent as form-data
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+    print("Login data:", {'username': username, 'password': password})
+
+    user = User.query.filter_by(username=username).first()
+    print("Found user:", user)
+
+    if user and check_password_hash(user.password, password):
+        token = create_access_token(identity=username)
+        return jsonify(access_token=token)
+
+    return jsonify({"message": "Invalid credentials"}), 401
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -101,23 +126,18 @@ def play_game():
     return render_template("game.html", username=username, target=target, attempts=attempts, game_over=False, message=feedback)
 
 
-@app.route("/submit_score", methods=["POST"])
-@jwt_required()
+
+
+@app.route('/submit_score', methods=['POST'])
+@jwt_required()  # This decorator ensures the user is authenticated
 def submit_score():
-    username = get_jwt_identity()
-    attempts = int(request.form["attempts"])
+    current_user = get_jwt_identity()  # Get the user identity (username)
+    score = request.json.get('score')
+    
+    # Save the score to the database or perform some action
+    return jsonify({"message": f"Score submitted successfully by {current_user}"})
 
-    existing_score = HighScore.query.filter_by(username=username).first()
-    if existing_score:
-        if attempts > existing_score.score:
-            existing_score.score = attempts
-            db.session.commit()
-    else:
-        new_score = HighScore(username=username, score=attempts)
-        db.session.add(new_score)
-        db.session.commit()
 
-    return redirect("/leaderboard")
 
 
 @app.route("/leaderboard")
@@ -129,4 +149,5 @@ def leaderboard():
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
+
     app.run(debug=True)

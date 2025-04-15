@@ -1,15 +1,57 @@
-<script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Guess the Number Game</title>
+</head>
+<body>
+  <h2>Welcome, {{ username }}!</h2>
+  <p>You have {{ attempts }} tries to guess a number between 1 and 50.</p>
+
+  {% if message %}
+    <p>{{ message }}</p>
+  {% endif %}
+
+  {% if not game_over %}
+    <form method="POST" action="/play_game">
+      <input type="hidden" name="target" value="{{ target }}" />
+      <input type="hidden" name="attempts" value="{{ attempts }}" />
+      <input type="text" name="guess" placeholder="Enter your guess" required />
+      <button type="submit">Submit Guess</button>
+    </form>
+  {% else %}
+    <p>Game Over!</p>
+    <form method="GET" action="/">
+      <button type="submit">Play Again</button>
+    </form>
+  {% endif %}
+
+  <br />
+  <button onclick="submitScore(100)">Submit Score</button>
+
+  <script>
     async function submitScore(scoreValue) {
       const token = localStorage.getItem("token");
+
+      if (!token) {
+        alert("You must be logged in to submit a score.");
+        window.location.href = "/login";
+        return;
+      }
+
       const res = await fetch("/submit_score", {
         method: "POST",
         headers: {
+          "Content-Type": "application/json",
           "Authorization": "Bearer " + token
         },
         body: JSON.stringify({ score: scoreValue })
       });
-      const result = await res.json();
-      alert(result.message);
+
+      const data = await res.json();
+      alert(data.message);
     }
-    </script>
-    
+  </script>
+</body>
+</html>
