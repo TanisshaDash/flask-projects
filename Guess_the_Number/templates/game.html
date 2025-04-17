@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Guess the Number Game</title>
 </head>
-<body>
+<body class="game-bg">
   <h2>Welcome, {{ username }}!</h2>
   <p>You have {{ attempts }} tries to guess a number between 1 and 50.</p>
 
@@ -32,21 +32,13 @@
 
   <script>
     async function submitScore(scoreValue) {
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        alert("You must be logged in to submit a score.");
-        window.location.href = "/login";
-        return;
-      }
-
       const res = await fetch("/submit_score", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer " + token
         },
-        body: JSON.stringify({ score: scoreValue })
+        body: JSON.stringify({ score: scoreValue }),
+        credentials: "include",  // Ensure cookies are included in the request
       });
 
       const data = await res.json();

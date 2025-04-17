@@ -2,18 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guess the Number Game</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Welcome to Guess Game</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body class="index-bg">  <!-- Add background motion class here -->
-    <div class="container">
-        <h1>Welcome to the Number Guessing Game!</h1>
-        <form method="POST">
-            <label for="username">Enter your Name:</label>
-            <input type="text" name="username" required>
-            <button type="submit">Start Game</button>
-        </form>
-    </div>
+<body>
+    <h2>Welcome, {{ username }}!</h2>
+  <form method="POST">
+    <button type="submit">Start Game</button>
+  </form>
+  <br>
+  <a href="/leaderboard">View Leaderboard</a> |
+  <a href="/logout">Logout</a>
 </body>
 </html>

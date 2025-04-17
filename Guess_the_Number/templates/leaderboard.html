@@ -2,28 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leaderboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body class="leaderboard-bg">  <!-- Add background motion class here -->
-    <div class="container">
-        <h1>Leaderboard</h1>
-        <table>
-            <tr>
-                <th>Rank</th>
-                <th>Username</th>
-                <th>Score (Attempts)</th>
-            </tr>
-            {% for score in scores %}
-            <tr>
-                <td>{{ loop.index }}</td>
-                <td>{{ score.username }}</td>
-                <td>{{ score.score }}</td>
-            </tr>
-            {% endfor %}
-        </table>
-        <a href="/">Back to Home</a>
-    </div>
+  <meta charset="UTF-8">
+  <title>Leaderboard</title>
+</head>
+<body>
+  <h2>Leaderboard</h2>
+  <table border="1">
+    <tr>
+      <th>Username</th>
+      <th>Score</th>
+    </tr>
+    {% for score in scores %}
+    <tr>
+      <td>{{ score.username }}</td>
+      <td>{{ score.score }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  <br>
+  <a href="/">Back to Home</a>
 </body>
 </html>

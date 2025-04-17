@@ -1,36 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Login</title>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
-<body>
-  <h2>Login</h2>
-  <input id="username" placeholder="Username"><br>
-  <input id="password" type="password" placeholder="Password"><br>
-  <button onclick="login()">Login</button>
+<body class="index-bg">
+    <div class="container">
+        <h1>Login</h1>
+        <form method="POST">
+            <label for="username">Username</label>
+            <input type="text" name="username" required>
 
-  <script>
-    async function login() {
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
+            <label for="password">Password</label>
+            <input type="password" name="password" required>
 
-      const res = await fetch('/login', {
-        method: 'POST',
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
-      });
-
-      const data = await res.json();
-      console.log(data);
-
-      if (res.ok && data.access_token) {
-        localStorage.setItem('token', data.access_token);
-        alert('Login successful!');
-        window.location.href = "/";
-      } else {
-        alert('Login failed: ' + (data.message || "Try again"));
-      }
-    }
-  </script>
+            <button type="submit">Login</button>
+        </form>
+        <p>Don't have an account? <a href="/register">Register here</a></p>
+    </div>
 </body>
 </html>
