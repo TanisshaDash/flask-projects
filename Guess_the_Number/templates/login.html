@@ -1,23 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Login</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <title>Login</title>
 </head>
-<body class="index-bg">
-    <div class="container">
-        <h1>Login</h1>
-        <form method="POST">
-            <label for="username">Username</label>
-            <input type="text" name="username" required>
+<body>
+  <h1>Login</h1>
+  <form id="loginForm">
+    <input type="text" name="username" placeholder="Username" required />
+    <input type="password" name="password" placeholder="Password" required />
+    <button type="submit">Login</button>
+  </form>
 
-            <label for="password">Password</label>
-            <input type="password" name="password" required>
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", async function (e) {
+      e.preventDefault();  // Prevent form submission
+      const form = e.target;
+      const formData = new FormData(form);  // Grab form data
 
-            <button type="submit">Login</button>
-        </form>
-        <p>Don't have an account? <a href="/register">Register here</a></p>
-    </div>
+      // Convert FormData to an object
+      const data = {};
+      formData.forEach((value, key) => {
+        data[key] = value;
+      });
+
+      // Send the form data as JSON
+      const response = await fetch("/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },  // Set content type to JSON
+        body: JSON.stringify(data),  // Convert the data to JSON
+        credentials: "include"  // Include cookies with requests
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        alert("Login successful: " + JSON.stringify(data));
+      } else {
+        const text = await response.text();
+        alert("Login failed: " + text);  // Show error if login fails
+      }
+    });
+  </script>
 </body>
 </html>
