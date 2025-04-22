@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, jsonify, make_response
+from flask import Flask, request, render_template, redirect, jsonify, make_response,session
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import (
     JWTManager, create_access_token, jwt_required,
@@ -73,11 +73,53 @@ def logout():
 @jwt_required()
 def start_game():
     target = random.randint(1, 50)
-    return jsonify({
-        "msg": "Game started!",
-        "target": target,
-        "attempts": 7
-    })
+    attempts = 7  # Set attempts to 7 or whatever you want
+
+    # Store the game state in the session
+    session["target"] = target
+    session["attempts"] = attempts
+
+    return redirect("/play_game")
+
+@app.route("/play_game", methods=["GET", "POST"])
+@jwt_required()
+def play_game():
+    if request.method == "GET":
+        # Get the game state (target and attempts) from the session
+        target = session.get("target")
+        attempts = session.get("attempts")
+
+        if target is None or attempts is None:
+            # If target or attempts are not found, redirect to the homepage
+            return redirect("/")
+
+        # Render the game page
+        username = get_jwt_identity()
+        return render_template("game.html", username=username, target=target, attempts=attempts, message="", game_over=False)
+
+    # POST - handle form submission (guess logic)
+    username = get_jwt_identity()
+    guess = int(request.form["guess"])  # Ensure the guess is sent in the form data
+    target = int(request.form["target"])
+    attempts = int(request.form["attempts"]) - 1  # Decrease attempts by 1
+
+    if guess == target:
+        message = "🎉 Correct! You guessed it!"
+        game_over = True
+    elif attempts == 0:
+        message = f"❌ No attempts left! The number was {target}."
+        game_over = True
+    else:
+        message = "🔽 Too low!" if guess < target else "🔼 Too high!"
+        game_over = False
+
+    # Update the session with the new number of attempts
+    session["target"] = target
+    session["attempts"] = attempts
+
+    return render_template("game.html", username=username, target=target, attempts=attempts, message=message, game_over=game_over)
+
+
 
 @app.route("/submit_score", methods=["POST"])
 @jwt_required()
