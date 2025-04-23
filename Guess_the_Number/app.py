@@ -72,52 +72,60 @@ def logout():
 @app.route("/start_game", methods=["GET"])
 @jwt_required()
 def start_game():
+    print("Start Game route hit!") 
+    # Generate a random target and set the number of attempts
     target = random.randint(1, 50)
-    attempts = 7  # Set attempts to 7 or whatever you want
+    attempts = 7  # Set attempts to 7
 
     # Store the game state in the session
     session["target"] = target
     session["attempts"] = attempts
-
+    session["game_over"] = False  # Keep track if the game is over or not
+    
+     # Redirect to the /play_game route
     return redirect("/play_game")
+
 
 @app.route("/play_game", methods=["GET", "POST"])
 @jwt_required()
 def play_game():
-    if request.method == "GET":
-        # Get the game state (target and attempts) from the session
-        target = session.get("target")
-        attempts = session.get("attempts")
+    # Ensure the game state is available
+    target = session.get("target")
+    attempts = session.get("attempts")
+    game_over = session.get("game_over")
 
-        if target is None or attempts is None:
-            # If target or attempts are not found, redirect to the homepage
-            return redirect("/")
+    # If the game hasn't been started yet, redirect to the home page
+    if target is None or attempts is None:
+        return redirect("/")
 
-        # Render the game page
-        username = get_jwt_identity()
-        return render_template("game.html", username=username, target=target, attempts=attempts, message="", game_over=False)
+    # If the game is over, display the game over message
+    if game_over:
+        message = f"Game over! The correct number was {target}."
+        return render_template("game.html", message=message, game_over=True)
 
-    # POST - handle form submission (guess logic)
-    username = get_jwt_identity()
-    guess = int(request.form["guess"])  # Ensure the guess is sent in the form data
-    target = int(request.form["target"])
-    attempts = int(request.form["attempts"]) - 1  # Decrease attempts by 1
+    # Handle guess submission
+    if request.method == "POST":
+        guess = int(request.form["guess"])  # Ensure the guess is sent in the form data
+        attempts -= 1  # Decrease attempts by 1
 
-    if guess == target:
-        message = "🎉 Correct! You guessed it!"
-        game_over = True
-    elif attempts == 0:
-        message = f"❌ No attempts left! The number was {target}."
-        game_over = True
-    else:
-        message = "🔽 Too low!" if guess < target else "🔼 Too high!"
-        game_over = False
+        # Determine if the guess is correct or not
+        if guess == target:
+            message = "🎉 Correct! You guessed it!"
+            session["game_over"] = True
+        elif attempts == 0:
+            message = f"❌ No attempts left! The number was {target}."
+            session["game_over"] = True
+        else:
+            message = "🔽 Too low!" if guess < target else "🔼 Too high!"
 
-    # Update the session with the new number of attempts
-    session["target"] = target
-    session["attempts"] = attempts
+        # Update the session with the new number of attempts
+        session["attempts"] = attempts
 
-    return render_template("game.html", username=username, target=target, attempts=attempts, message=message, game_over=game_over)
+        return render_template("game.html", message=message, attempts=attempts, game_over=session["game_over"])
+
+    # If it's a GET request, just show the page without revealing the target
+    return render_template("game.html", attempts=attempts, game_over=game_over)
+
 
 
 

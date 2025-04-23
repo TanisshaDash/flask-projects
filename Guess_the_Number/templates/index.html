@@ -33,6 +33,7 @@
     <h2>Welcome, <span id="userNameDisplay"></span></h2>
     <button onclick="startGame()">Start Game</button>
     <button onclick="viewLeaderboard()">View Leaderboard</button>
+    <button onclick="logout()">Logout</button>
   </div>
 
   <!-- Leaderboard Section -->
@@ -43,12 +44,12 @@
   </div>
 
   <script>
+    let currentUser = "";
+
     // Handle Login
     document.getElementById("loginForm").addEventListener("submit", async function (e) {
       e.preventDefault();
-      const form = e.target;
-      const formData = new FormData(form);
-      
+      const formData = new FormData(e.target);
       const response = await fetch("/login", {
         method: "POST",
         body: JSON.stringify({
@@ -60,11 +61,11 @@
       });
 
       if (response.ok) {
-        const data = await response.json();
+        currentUser = formData.get('username');
         document.getElementById("loginSection").style.display = "none";
         document.getElementById("registerSection").style.display = "none";
         document.getElementById("gameSection").style.display = "block";
-        document.getElementById("userNameDisplay").textContent = formData.get('username');
+        document.getElementById("userNameDisplay").textContent = currentUser;
       } else {
         alert("Login failed!");
       }
@@ -73,9 +74,7 @@
     // Handle Register
     document.getElementById("registerForm").addEventListener("submit", async function (e) {
       e.preventDefault();
-      const form = e.target;
-      const formData = new FormData(form);
-
+      const formData = new FormData(e.target);
       const response = await fetch("/register", {
         method: "POST",
         body: JSON.stringify({
@@ -94,19 +93,27 @@
 
     // Start Game Function
     function startGame() {
-      fetch("/start_game", {
-        method: "GET",
-        credentials: "include"
-      })
-      .then(res => res.json())
-      .then(data => {
-        alert(data.msg);
-        // You can redirect to the actual game page here
-      })
-      .catch(err => alert("Error starting the game."));
+  fetch("/start_game", {
+    method: "GET",
+    credentials: "include"
+  })
+  .then(res => {
+    if (res.redirected) {
+      window.location.href = res.url;
+    } else {
+      return res.json();
     }
+  })
+  .then(data => {
+    if (data && data.msg) {
+      alert(data.msg);
+    }
+  })
+  .catch(err => alert("Error starting the game."));
+}
 
-    // View Leaderboard Function
+
+    // View Leaderboard
     function viewLeaderboard() {
       fetch("/leaderboard", {
         method: "GET"
@@ -126,10 +133,20 @@
       .catch(err => alert("Error fetching leaderboard."));
     }
 
-    // Back to Game from Leaderboard
+    // Back to Game
     function backToGame() {
-      document.getElementById("gameSection").style.display = "block";
       document.getElementById("leaderboardSection").style.display = "none";
+      document.getElementById("gameSection").style.display = "block";
+    }
+
+    // Logout
+    async function logout() {
+      await fetch("/logout", {
+        method: "POST",
+        credentials: "include"
+      });
+      alert("Logged out!");
+      window.location.reload();
     }
   </script>
 </body>

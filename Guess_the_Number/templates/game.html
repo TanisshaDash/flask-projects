@@ -5,69 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Guess the Number Game</title>
 </head>
-<body class="game-bg">
-  <h2>Welcome, {{ username }}!</h2>
-  <p>You have {{ attempts }} tries to guess a number between 1 and 50.</p>
+<body>
+  <h1>Guess the Number Game</h1>
 
   {% if message %}
     <p>{{ message }}</p>
   {% endif %}
 
   {% if not game_over %}
-    <form id="guessForm">
-      <input type="hidden" name="target" value="{{ target }}" />
-      <input type="hidden" name="attempts" value="{{ attempts }}" />
-      <input type="text" name="guess" placeholder="Enter your guess" required />
+    <form method="POST" action="/play_game">
+      <label for="guess">Enter your guess (1-50):</label>
+      <input type="number" name="guess" required min="1" max="50" />
       <button type="submit">Submit Guess</button>
     </form>
+
+    <p>Attempts left: {{ attempts }}</p>
+
   {% else %}
-    <p>Game Over!</p>
-    <form method="GET" action="/start_game">
-      <button type="submit">Play Again</button>
-    </form>
+    <p>Game Over! The number was: {{ session['target'] }}</p>
+    <a href="/">Go Home</a>
   {% endif %}
-
-  <br />
-  <button onclick="submitScore(100)">Submit Score</button>
-
-  <script>
-    // Function to handle guess submission via fetch
-    document.getElementById("guessForm")?.addEventListener("submit", async function (e) {
-      e.preventDefault(); // Prevent the form from submitting traditionally
-      const form = e.target;
-      const formData = new FormData(form);
-      const data = {};
-      formData.forEach((value, key) => { data[key] = value; });
-
-      const res = await fetch("/play_game", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-        credentials: "include",  // Include cookies with requests
-      });
-
-      const responseData = await res.json();
-      if (responseData.success) {
-        alert("Your guess was correct!");
-      } else {
-        alert(responseData.message);
-      }
-    });
-
-    // Function to submit the score
-    async function submitScore(scoreValue) {
-      const res = await fetch("/submit_score", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ score: scoreValue }),
-        credentials: "include",  // Ensure cookies are included in the request
-      });
-
-      const data = await res.json();
-      alert(data.msg);  // Display response from Flask backend
-    }
-  </script>
 </body>
 </html>
