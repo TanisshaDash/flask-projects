@@ -66,9 +66,6 @@ def login():
     resp.set_cookie("access_token_cookie", access_token, httponly=True)
     return resp
 
-
-
-
 @app.route("/logout", methods=["POST"])
 def logout():
     resp = jsonify({"msg": "Logged out"})
@@ -170,8 +167,6 @@ def submit_score():
 
     except Exception as e:
         return jsonify({"msg": "Error processing the score submission", "error": str(e)}), 500
-
-
 
 
 @app.route("/leaderboard", methods=["GET"])
