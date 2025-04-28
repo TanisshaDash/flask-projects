@@ -14,16 +14,57 @@
 
   {% if not game_over %}
     <form method="POST" action="/play_game">
-      <label for="guess">Enter your guess (1-50):</label>
-      <input type="number" name="guess" required min="1" max="50" />
-      <button type="submit">Submit Guess</button>
+      <label for="guess">Enter your guess (1-50) or press 'Q' to quit:</label><br>
+      <input type="text" name="guess" required />
+      <button type="submit">Submit</button>
     </form>
 
     <p>Attempts left: {{ attempts }}</p>
 
   {% else %}
     <p>Game Over! The number was: {{ session['target'] }}</p>
-    <a href="/">Go Home</a>
+
+    <!-- After game over buttons -->
+    <form id="scoreForm">
+      <input type="hidden" name="score" value="{{ attempts }}">
+      <button type="submit">Save Score</button>
+    </form>
+
+    <form method="GET" action="/start_game">
+      <button type="submit">Play Again</button>
+    </form>
+
+    <form method="GET" action="/">
+      <button type="submit">Quit</button>
+    </form>
   {% endif %}
-</body>
-</html>
+
+  <script>
+    document.getElementById("scoreForm").addEventListener("submit", function (event) {
+      event.preventDefault();  // Prevent the default form submission
+  
+      const score = document.querySelector('input[name="score"]').value;  // Get score value
+  
+      // Send the score as JSON
+      fetch('/submit_score', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',  // Ensures the server knows it's JSON
+        },
+        body: JSON.stringify({ score: score })  // Send the score as JSON data
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);  // Optionally handle the response from the server
+  
+        if (data.msg === "Score submitted successfully!") {
+          window.location.href = "/leaderboard";  // Redirect to leaderboard after saving score
+        } else {
+          alert("Failed to submit score.");
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);  // Handle any errors
+      });
+    });
+  </script>

@@ -32,15 +32,7 @@
   <div id="gameSection" style="display:none;">
     <h2>Welcome, <span id="userNameDisplay"></span></h2>
     <button onclick="startGame()">Start Game</button>
-    <button onclick="viewLeaderboard()">View Leaderboard</button>
     <button onclick="logout()">Logout</button>
-  </div>
-
-  <!-- Leaderboard Section -->
-  <div id="leaderboardSection" style="display:none;">
-    <h2>Leaderboard</h2>
-    <ul id="leaderboardList"></ul>
-    <button onclick="backToGame()">Back to Game</button>
   </div>
 
   <script>
@@ -93,50 +85,23 @@
 
     // Start Game Function
     function startGame() {
-  fetch("/start_game", {
-    method: "GET",
-    credentials: "include"
-  })
-  .then(res => {
-    if (res.redirected) {
-      window.location.href = res.url;
-    } else {
-      return res.json();
-    }
-  })
-  .then(data => {
-    if (data && data.msg) {
-      alert(data.msg);
-    }
-  })
-  .catch(err => alert("Error starting the game."));
-}
-
-
-    // View Leaderboard
-    function viewLeaderboard() {
-      fetch("/leaderboard", {
-        method: "GET"
+      fetch("/start_game", {
+        method: "GET",
+        credentials: "include"
       })
-      .then(res => res.json())
+      .then(res => {
+        if (res.redirected) {
+          window.location.href = res.url;
+        } else {
+          return res.json();
+        }
+      })
       .then(data => {
-        const leaderboardList = document.getElementById("leaderboardList");
-        leaderboardList.innerHTML = "";
-        data.forEach(item => {
-          const li = document.createElement("li");
-          li.textContent = `${item.username}: ${item.score}`;
-          leaderboardList.appendChild(li);
-        });
-        document.getElementById("gameSection").style.display = "none";
-        document.getElementById("leaderboardSection").style.display = "block";
+        if (data && data.msg) {
+          alert(data.msg);
+        }
       })
-      .catch(err => alert("Error fetching leaderboard."));
-    }
-
-    // Back to Game
-    function backToGame() {
-      document.getElementById("leaderboardSection").style.display = "none";
-      document.getElementById("gameSection").style.display = "block";
+      .catch(err => alert("Error starting the game."));
     }
 
     // Logout
