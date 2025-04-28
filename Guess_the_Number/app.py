@@ -58,10 +58,14 @@ def login():
     if not user or not check_password_hash(user.password, data.get("password")):
         return jsonify({"msg": "Invalid credentials"}), 401
 
+    # Store username in session for tracking
+    session['username'] = user.username
+    
     access_token = create_access_token(identity=user.username)
     resp = jsonify({"msg": "Login successful"})
     resp.set_cookie("access_token_cookie", access_token, httponly=True)
     return resp
+
 
 
 
@@ -112,6 +116,8 @@ def play_game():
         try:
             guess = int(guess)
             target = session.get('target')
+            if guess > 50:
+                return jsonify({"msg": "Invalid number. Please guess a number between 1 and 50."}), 400
             
             if guess == target:
                 message = "Correct! You guessed the number!"
@@ -136,11 +142,6 @@ def play_game():
         attempts=session.get('attempts', 0),
         game_over=session.get('game_over', False)
     )
-
-
-
-
-
 
 @app.route("/submit_score", methods=["POST"])
 def submit_score():
@@ -175,9 +176,15 @@ def submit_score():
 
 @app.route("/leaderboard", methods=["GET"])
 def leaderboard():
-    scores = HighScore.query.order_by(HighScore.score.desc()).limit(10).all()
-    
-    return render_template("leaderboard.html", scores=scores)
+    if 'username' not in session:
+        return redirect(url_for('index'))  # Redirect to home page if user is not logged in
+
+    # Query to get the highest score for each user
+    high_scores = db.session.query(
+        HighScore.username, db.func.max(HighScore.score).label('high_score')
+    ).group_by(HighScore.username).order_by(db.desc('high_score')).all()
+
+    return render_template("leaderboard.html", high_scores=high_scores)
 
 @app.route("/", methods=["GET"])
 def index():
