@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, jsonify, make_response,session
+from flask import Flask, request, render_template, redirect, jsonify, make_response,session,url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import (
     JWTManager, create_access_token, jwt_required,
@@ -11,7 +11,7 @@ import random
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'supersecretkey'
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('GUESS_DB_URL')
+app.config['SQLALCHEMY_DATABASE_URI'] ='sqlite:///guess_game.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # JWT Settings
@@ -63,6 +63,8 @@ def login():
     resp.set_cookie("access_token_cookie", access_token, httponly=True)
     return resp
 
+
+
 @app.route("/logout", methods=["POST"])
 def logout():
     resp = jsonify({"msg": "Logged out"})
@@ -87,74 +89,98 @@ def start_game():
 
 
 @app.route("/play_game", methods=["GET", "POST"])
-@jwt_required()
 def play_game():
-    # Ensure the game state is available
-    target = session.get("target")
-    attempts = session.get("attempts")
-    game_over = session.get("game_over")
+    if 'target' not in session:
+        return redirect(url_for('index'))
 
-    # If the game hasn't been started yet, redirect to the home page
-    if target is None or attempts is None:
-        return redirect("/")
+    message = ""
+    game_over = session.get('game_over', False)
+    attempts = session.get('attempts', 5)
 
-    # If the game is over, display the game over message
-    if game_over:
-        message = f"Game over! The correct number was {target}."
-        return render_template("game.html", message=message, game_over=True)
-
-    # Handle guess submission
     if request.method == "POST":
-        guess = int(request.form["guess"])  # Ensure the guess is sent in the form data
-        attempts -= 1  # Decrease attempts by 1
+        guess = request.form.get("guess")
+        
+        if guess is None:
+            guess = ""
 
-        # Determine if the guess is correct or not
-        if guess == target:
-            message = "🎉 Correct! You guessed it!"
-            session["game_over"] = True
-        elif attempts == 0:
-            message = f"❌ No attempts left! The number was {target}."
-            session["game_over"] = True
-        else:
-            message = "🔽 Too low!" if guess < target else "🔼 Too high!"
+        if guess.lower() == 'q':
+            # User wants to quit
+            session['game_over'] = True
+            return redirect(url_for('leaderboard'))
 
-        # Update the session with the new number of attempts
-        session["attempts"] = attempts
+        # Otherwise normal number guess
+        try:
+            guess = int(guess)
+            target = session.get('target')
+            
+            if guess == target:
+                message = "Correct! You guessed the number!"
+                session['game_over'] = True
+            elif guess < target:
+                message = "Too low!"
+            else:
+                message = "Too high!"
+            
+            session['attempts'] -= 1
 
-        return render_template("game.html", message=message, attempts=attempts, game_over=session["game_over"])
+            if session['attempts'] <= 0:
+                message = "Game Over! No attempts left."
+                session['game_over'] = True
 
-    # If it's a GET request, just show the page without revealing the target
-    return render_template("game.html", attempts=attempts, game_over=game_over)
+        except ValueError:
+            message = "Invalid input. Enter a number between 1 and 50 or 'q' to quit."
+
+    return render_template(
+        "game.html",
+        message=message,
+        attempts=session.get('attempts', 0),
+        game_over=session.get('game_over', False)
+    )
+
+
 
 
 
 
 @app.route("/submit_score", methods=["POST"])
-@jwt_required()
 def submit_score():
-    username = get_jwt_identity()
-    score = int(request.json.get("score", 0))
+    if 'username' not in session:
+        return jsonify({"msg": "User not logged in"}), 401
+    
+    # Rest of the code...
 
-    existing = HighScore.query.filter_by(username=username).first()
-    if existing:
-        if score > existing.score:
-            existing.score = score
-    else:
-        db.session.add(HighScore(username=username, score=score))
+    try:
+        # Get the score from the request body
+        data = request.get_json()  # This retrieves the JSON sent from the frontend
 
-    db.session.commit()
-    return jsonify({"msg": "Score submitted"}), 200
+        # Check if the score is in the received JSON data
+        score = data.get("score")
+        username = session.get('username')  # Get username from session
+
+        if not username or not score:
+            return jsonify({"msg": "Missing username or score"}), 400
+
+        # Store the score in the database
+        new_score = HighScore(username=username, score=int(score))
+        db.session.add(new_score)
+        db.session.commit()
+
+        return jsonify({"msg": "Score submitted successfully!"}), 200  # Success message
+
+    except Exception as e:
+        return jsonify({"msg": "Error processing the score submission", "error": str(e)}), 500
+
+
+
 
 @app.route("/leaderboard", methods=["GET"])
 def leaderboard():
     scores = HighScore.query.order_by(HighScore.score.desc()).limit(10).all()
-    return jsonify([
-        {"username": s.username, "score": s.score}
-        for s in scores
-    ])
+    
+    return render_template("leaderboard.html", scores=scores)
 
 @app.route("/", methods=["GET"])
-def home():
+def index():
     return render_template("index.html")
 
 if __name__ == "__main__":
