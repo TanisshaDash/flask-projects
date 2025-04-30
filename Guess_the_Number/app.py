@@ -18,7 +18,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config["JWT_SECRET_KEY"] = os.getenv('JWT_SECRET_KEY')
 app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)
-app.config["JWT_COOKIE_SECURE"] = False
+app.config["JWT_COOKIE_SECURE"] = True
 app.config["JWT_COOKIE_CSRF_PROTECT"] = False
 
 db = SQLAlchemy(app)
@@ -75,7 +75,6 @@ def logout():
 @app.route("/start_game", methods=["GET"])
 @jwt_required()
 def start_game():
-    print("Start Game route hit!") 
     # Generate a random target and set the number of attempts
     target = random.randint(1, 50)
     attempts = 7  # Set attempts to 7
@@ -90,6 +89,7 @@ def start_game():
 
 
 @app.route("/play_game", methods=["GET", "POST"])
+@jwt_required()
 def play_game():
     if 'target' not in session:
         return redirect(url_for('index'))
@@ -141,12 +141,11 @@ def play_game():
     )
 
 @app.route("/submit_score", methods=["POST"])
+
 def submit_score():
     if 'username' not in session:
         return jsonify({"msg": "User not logged in"}), 401
     
-    # Rest of the code...
-
     try:
         # Get the score from the request body
         data = request.get_json()  # This retrieves the JSON sent from the frontend
@@ -163,7 +162,7 @@ def submit_score():
         db.session.add(new_score)
         db.session.commit()
 
-        return jsonify({"msg": "Score submitted successfully!"}), 200  # Success message
+        return jsonify({"msg": "Score submitted successfully!"}), 200 
 
     except Exception as e:
         return jsonify({"msg": "Error processing the score submission", "error": str(e)}), 500
