@@ -11,7 +11,7 @@ import random
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'supersecretkey'
-app.config['SQLALCHEMY_DATABASE_URI'] ='sqlite:///guess_game.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('POSTGRES_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # JWT Settings
