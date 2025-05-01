@@ -41,7 +41,6 @@ def register():
     data = request.json
     if not data.get("username") or not data.get("password"):
         return jsonify({"msg": "Username and password required"}), 400
-
     if User.query.filter_by(username=data["username"]).first():
         return jsonify({"msg": "Username already exists"}), 400
 
