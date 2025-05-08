@@ -31,7 +31,7 @@
       });
 
       if (response.ok) {
-        window.location.href = "/start_game";  // or "/home"
+        window.location.href = "/";  // or "/home"
       } else {
         const data = await response.json();
         alert(data.msg || "Login failed");

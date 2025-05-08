@@ -69,8 +69,8 @@ def register():
         return "Username and password required", 400
     if User.query.filter_by(username=username).first():
         return "Username already exists", 400
-    if len(password) < 6:
-        return "Password must be at least 6 characters", 400
+    if len(password) < 4:
+        return "Password must be at least 4 characters", 400
 
     hashed_pw = generate_password_hash(password)
     new_user = User(username=username, password=hashed_pw)
