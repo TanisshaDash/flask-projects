@@ -9,10 +9,12 @@ from datetime import timedelta
 import os
 import random
 
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'supersecretkey'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///guess_game.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 
 # JWT Settings
 app.config["JWT_SECRET_KEY"] = os.getenv('JWT_SECRET_KEY', 'defaultjwtsecret')
@@ -21,14 +23,17 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)
 app.config["JWT_COOKIE_SECURE"] = False  # True for production with HTTPS
 app.config["JWT_COOKIE_CSRF_PROTECT"] = False
 
+
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
+
 
 # --- Models ---
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
+
 
 class HighScore(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -44,6 +49,7 @@ def home():
     if username:
         return render_template("index.html", username=username)
     return redirect(url_for('login'))
+
 
 
 # --- Register Route ---
@@ -73,7 +79,6 @@ def register():
     return redirect(url_for('login'))
 
 
-
 # --- Login Route ---
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -83,15 +88,16 @@ def login():
     data = request.get_json()
     username = data.get("username")
     password = data.get("password")
+
     user = User.query.filter_by(username=username).first()
 
     if not user or not check_password_hash(user.password, password):
-        return "Invalid credentials", 401
+        return jsonify({"msg": "Invalid credentials"}), 401
 
     access_token = create_access_token(identity=username)
     resp = jsonify({"msg": "Login successful"})
     resp.set_cookie("access_token_cookie", access_token, httponly=True)
-    return resp
+    return resp  # Don't redirect from backend when using JS-based login
 
 
 @app.route("/welcome")
@@ -100,11 +106,13 @@ def welcome():
     username = get_jwt_identity()
     return render_template("index.html", username=username)
 
+
 @app.route("/logout", methods=["POST"])
 def logout():
     resp = jsonify({"msg": "Logged out"})
     unset_jwt_cookies(resp)
     return resp
+
 
 @app.route("/start_game", methods=["GET"])
 @jwt_required()
@@ -113,7 +121,8 @@ def start_game():
     session["target"] = target
     session["attempts"] = 7
     session["game_over"] = False
-    return redirect("/play_game")
+    return redirect("/play_game")  # Redirects to game screen
+
 
 @app.route("/play_game", methods=["GET", "POST"])
 @jwt_required()
@@ -157,6 +166,7 @@ def play_game():
         game_over=session.get('game_over', False)
     )
 
+
 @app.route("/submit_score", methods=["POST"])
 @jwt_required()
 def submit_score():
@@ -172,6 +182,7 @@ def submit_score():
         return jsonify({"msg": "Score submitted successfully!"}), 200
     except Exception as e:
         return jsonify({"msg": "Error processing score submission", "error": str(e)}), 500
+
 
 @app.route("/leaderboard", methods=["GET"])
 @jwt_required()

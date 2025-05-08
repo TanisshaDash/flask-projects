@@ -4,42 +4,37 @@
   <title>Login</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
-  <body class="login-page">
+<body class="login-page">
   <h1>Login</h1>
+
   <form id="loginForm">
-    <input type="text" name="username" placeholder="Username" required />
-    <input type="password" name="password" placeholder="Password" required />
+    <input type="text" name="username" id="username" placeholder="Username" required />
+    <input type="password" name="password" id="password" placeholder="Password" required />
     <button type="submit">Login</button>
   </form>
+
   <p>Don't have an account? <a href="/register">Register here</a></p>
 
   <script>
-    document.getElementById("loginForm").addEventListener("submit", async function (e) {
-      e.preventDefault();  // Prevent form submission
-      const form = e.target;
-      const formData = new FormData(form);  // Grab form data
+    document.getElementById("loginForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
 
-      // Convert FormData to an object
-      const data = {};
-      formData.forEach((value, key) => {
-        data[key] = value;
-      });
-
-      // Send the form data as JSON
       const response = await fetch("/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },  // Set content type to JSON
-        body: JSON.stringify(data),  // Convert the data to JSON
-        credentials: "include"  // Include cookies with requests
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ username, password }),
+        credentials: "include"
       });
 
       if (response.ok) {
-        const data = await response.json();
-        alert("Login successful: " + JSON.stringify(data));
+        window.location.href = "/start_game";  // or "/home"
       } else {
-        const text = await response.text();
-        alert("Login failed: " + text);  // Show error if login fails
+        const data = await response.json();
+        alert(data.msg || "Login failed");
       }
     });
   </script>
