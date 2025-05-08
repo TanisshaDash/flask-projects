@@ -38,6 +38,15 @@
       })
       .catch(err => alert("Error starting the game."));
     }
+    
+    // Logout
+async function logout() {
+  await fetch("/logout", {
+    method: "POST",
+    credentials: "include"
+  });
+  window.location.href = "/login";  // Redirect to login page after logout
+}
   </script>
 </body>
 </html>
