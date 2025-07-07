@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Global Crime Stats</title>
+</head>
+<body>
+    <h1>Crime Statistics Viewer</h1>
+    <form method="POST" action="/stats">
+        <label>Country:</label>
+        <select name="country">
+            {% for c in countries %}
+                <option value="{{ c }}">{{ c }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>Year:</label>
+        <select name="year">
+            {% for y in years %}
+                <option value="{{ y }}">{{ y }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>Crime Types:</label><br>
+        {% for ct in crime_types %}
+            <input type="checkbox" name="crime_types" value="{{ ct }}">{{ ct }}<br>
+        {% endfor %}
+        <br>
+        <input type="submit" value="View Stats">
+    </form>
+</body>
+</html>

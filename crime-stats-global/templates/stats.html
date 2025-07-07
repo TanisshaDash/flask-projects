@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ country }} - Crime Stats {{ year }}</title>
+</head>
+<body>
+    <h2>Crime Statistics for {{ country }} in {{ year }}</h2>
+
+    {% if crime_data %}
+        <ul>
+            {% for crime, count in crime_data.items() %}
+                <li>{{ crime }}: {{ count }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No data found for this selection.</p>
+    {% endif %}
+
+    <br>
+    <a href="/">Back to Home</a>
+</body>
+</html>
