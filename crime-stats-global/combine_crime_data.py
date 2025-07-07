@@ -1,23 +1,33 @@
 import pandas as pd
 
-# Load your individual Excel files
-homicide_df = pd.read_excel('crime-stats-global/data_cts_corruption_and_economic_crime.xlsx')
-assault_df = pd.read_excel('data/assault.xlsx')
-robbery_df = pd.read_excel('data/robbery.xlsx')
+def clean_excel(filepath, new_value_column_name, year_col='Unnamed: 9', value_col='Unnamed: 11'):
+    df = pd.read_excel(filepath, header=1)
+    df = df[['Country', year_col, value_col]].copy()
+    df.columns = ['Country', 'Year', new_value_column_name]
+    df.dropna(subset=['Country', 'Year'], inplace=True)
+    df['Year'] = pd.to_numeric(df['Year'], errors='coerce')
+    df[new_value_column_name] = pd.to_numeric(df[new_value_column_name], errors='coerce')
+    return df.dropna()
 
-# Make sure they have 'Country' and 'Year' columns
-# Rename the crime value column in each to reflect the type of crime
-homicide_df.rename(columns={'Value': 'Homicide'}, inplace=True)
-assault_df.rename(columns={'Value': 'Assault'}, inplace=True)
-robbery_df.rename(columns={'Value': 'Robbery'}, inplace=True)
+# ✅ Cleaned datasets
+corruption_df = clean_excel('crime-stats-global/data_cts_corruption_and_economic_crime.xlsx', 'Corruption_Econ_Crime')
+homicide_df = clean_excel('crime-stats-global/data_cts_intentional_homicide.xlsx', 'Homicide')
+prisoners_df = clean_excel('crime-stats-global/data_cts_prisons_and_prisoners.xlsx', 'Prisoner_Count')
+criminals_df = clean_excel('crime-stats-global/data_cts_violent_and_sexual_crime.xlsx', 'Violent_Sexual_Crime')
+firearms_df = clean_excel('crime-stats-global/data_iafq_firearms_trafficking.xlsx', 'Firearms_Trafficking')
+charthomicide_df = clean_excel('crime-stats-global/data_portal_m49_regions- homicide.xlsx', 'Regional_Homicide_Rate')
 
-# Merge all dataframes on 'Country' and 'Year'
-merged_df = homicide_df.merge(assault_df, on=['Country', 'Year'], how='outer')
-merged_df = merged_df.merge(robbery_df, on=['Country', 'Year'], how='outer')
+# 🔀 Merge all on Country + Year
+merged_df = corruption_df \
+    .merge(homicide_df, on=['Country', 'Year'], how='outer') \
+    .merge(prisoners_df, on=['Country', 'Year'], how='outer') \
+    .merge(criminals_df, on=['Country', 'Year'], how='outer') \
+    .merge(firearms_df, on=['Country', 'Year'], how='outer') \
+    .merge(charthomicide_df, on=['Country', 'Year'], how='outer')
 
-# Fill missing values with 0 (optional)
+# 🧹 Fill missing with 0
 merged_df.fillna(0, inplace=True)
 
-# Save to CSV
+# 💾 Save to CSV
 merged_df.to_csv('static/data/global_crime_data.csv', index=False)
-print(\"Combined data saved to static/data/global_crime_data.csv\")
+print("Combined data saved to static/data/global_crime_data.csv")
