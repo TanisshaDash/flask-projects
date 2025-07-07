@@ -9,25 +9,28 @@ def clean_excel(filepath, new_value_column_name, year_col='Unnamed: 9', value_co
     df[new_value_column_name] = pd.to_numeric(df[new_value_column_name], errors='coerce')
     return df.dropna()
 
-# ✅ Cleaned datasets
-corruption_df = clean_excel('crime-stats-global/data_cts_corruption_and_economic_crime.xlsx', 'Corruption_Econ_Crime')
-homicide_df = clean_excel('crime-stats-global/data_cts_intentional_homicide.xlsx', 'Homicide')
-prisoners_df = clean_excel('crime-stats-global/data_cts_prisons_and_prisoners.xlsx', 'Prisoner_Count')
-criminals_df = clean_excel('crime-stats-global/data_cts_violent_and_sexual_crime.xlsx', 'Violent_Sexual_Crime')
-firearms_df = clean_excel('crime-stats-global/data_iafq_firearms_trafficking.xlsx', 'Firearms_Trafficking')
-charthomicide_df = clean_excel('crime-stats-global/data_portal_m49_regions- homicide.xlsx', 'Regional_Homicide_Rate')
+def generate_merged_crime_data():
+    # ✅ Clean each dataset
+    corruption_df = clean_excel('data_cts_corruption_and_economic_crime.xlsx', 'Corruption_Econ_Crime')
+    homicide_df = clean_excel('crime-stats-global/data_cts_intentional_homicide.xlsx', 'Homicide')
+    prisoners_df = clean_excel('crime-stats-global/data_cts_prisons_and_prisoners.xlsx', 'Prisoner_Count')
+    criminals_df = clean_excel('crime-stats-global/data_cts_violent_and_sexual_crime.xlsx', 'Violent_Sexual_Crime')
+    firearms_df = clean_excel('crime-stats-global/data_iafq_firearms_trafficking.xlsx', 'Firearms_Trafficking')
+    charthomicide_df = clean_excel('crime-stats-global/data_portal_m49_regions- homicide.xlsx', 'Regional_Homicide_Rate')
 
-# 🔀 Merge all on Country + Year
-merged_df = corruption_df \
-    .merge(homicide_df, on=['Country', 'Year'], how='outer') \
-    .merge(prisoners_df, on=['Country', 'Year'], how='outer') \
-    .merge(criminals_df, on=['Country', 'Year'], how='outer') \
-    .merge(firearms_df, on=['Country', 'Year'], how='outer') \
-    .merge(charthomicide_df, on=['Country', 'Year'], how='outer')
+    # 🔁 Merge all dataframes on 'Country' and 'Year'
+    merged_df = corruption_df \
+        .merge(homicide_df, on=['Country', 'Year'], how='outer') \
+        .merge(prisoners_df, on=['Country', 'Year'], how='outer') \
+        .merge(criminals_df, on=['Country', 'Year'], how='outer') \
+        .merge(firearms_df, on=['Country', 'Year'], how='outer') \
+        .merge(charthomicide_df, on=['Country', 'Year'], how='outer')
 
-# 🧹 Fill missing with 0
-merged_df.fillna(0, inplace=True)
+    # 🧼 Fill missing values with 0
+    merged_df.fillna(0, inplace=True)
 
-# 💾 Save to CSV
-merged_df.to_csv('static/data/global_crime_data.csv', index=False)
-print("Combined data saved to static/data/global_crime_data.csv")
+    # 💾 Save to CSV (used by your app)
+    merged_df.to_csv('static/data/global_crime_data.csv', index=False)
+    print("✅ Merged data saved to static/data/global_crime_data.csv")
+
+    return merged_df
