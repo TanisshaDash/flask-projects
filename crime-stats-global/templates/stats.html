@@ -1,23 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>{{ country }} - Crime Stats {{ year }}</title>
+    <title>Crime Stats for {{ country }} ({{ year }})</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h2>Crime Statistics for {{ country }} in {{ year }}</h2>
+    <h1>📊 Crime Stats for {{ country }} in {{ year }}</h1>
 
     {% if crime_data %}
-        <ul>
-            {% for crime, count in crime_data.items() %}
-                <li>{{ crime }}: {{ count }}</li>
+        <table border="1" cellpadding="10">
+            <tr>
+                <th>Crime Type</th>
+                <th>Value</th>
+            </tr>
+            {% for key, value in crime_data.items() %}
+                <tr>
+                    <td>{{ key.replace('_', ' ') }}</td>
+                    <td>{{ value }}</td>
+                </tr>
             {% endfor %}
-        </ul>
+        </table>
     {% else %}
-        <p>No data found for this selection.</p>
+        <p>No data found for the selected country and year.</p>
     {% endif %}
 
-    <br>
-    <a href="/">Back to Home</a>
+    <a href="/">🔙 Go back</a>
 </body>
 </html>
