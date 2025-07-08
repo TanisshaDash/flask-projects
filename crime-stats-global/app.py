@@ -1,13 +1,18 @@
 from flask import Flask, render_template, request
 import pandas as pd
 import json
+from combine_crime_data import generate_merged_crime_data
+
+# Re-merge every time the app starts
+data = generate_merged_crime_data()
+
 
 app = Flask(__name__)
 
-# ✅ Load merged Excel file directly
-data = pd.read_excel('static/data/merged_global_crime_data.xlsx')
+# Load data (sample global crime dataset - replace with your actual source)
+# data = pd.read_csv('static/data/global_crime_data.csv') 
 
-# 🧹 Preprocess
+# Preprocess: fill missing values and group by country
 data.fillna(0, inplace=True)
 countries = sorted(data['Country'].unique())
 years = sorted(data['Year'].unique())
