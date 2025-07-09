@@ -2,30 +2,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Crime Stats - {{ country }} ({{ year }})</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Crime Stats - {{ country }}</title>
 </head>
 <body>
-    <h1>📊 Crime Data for {{ country }} - {{ year }}</h1>
-
-    {% if crime_data %}
-        <table border="1">
-            <tr>
-                <th>Crime Type</th>
-                <th>Value</th>
-            </tr>
-            {% for crime, value in crime_data.items() %}
-                <tr>
-                    <td>{{ crime.replace("_", " ") }}</td>
-                    <td>{{ value }}</td>
-                </tr>
+    <h1>📊 Crime Statistics for {{ country }}</h1>
+    <a href="/">← Back</a>
+    <table border="1">
+        <tr>
+            <th>Year</th>
+            {% for col in data.columns if col != 'Country' and col != 'Year' %}
+                <th>{{ col }}</th>
             {% endfor %}
-        </table>
-    {% else %}
-        <p>No data available for {{ country }} in {{ year }}.</p>
-    {% endif %}
-
-    <br>
-    <a href="/">🔙 Back to Home</a>
+        </tr>
+        {% for _, row in data.iterrows() %}
+            <tr>
+                <td>{{ row['Year'] }}</td>
+                {% for col in data.columns if col != 'Country' and col != 'Year' %}
+                    <td>{{ row[col] }}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
 </body>
 </html>

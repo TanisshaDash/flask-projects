@@ -2,36 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Global Crime Stats</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Global Crime Statistics</title>
 </head>
 <body>
-    <h1>🌍 Global Crime Statistics</h1>
-
-    <form method="POST" action="/stats">
-        <label for="country">Country:</label>
-        <select name="country" id="country" required>
-            {% for c in countries %}
-                <option value="{{ c }}">{{ c }}</option>
+    <h1>🌍 Global Crime Data Dashboard</h1>
+    <form action="/stats/{{ countries[0] }}" method="get">
+        <label for="country">Select a country:</label>
+        <select id="country" name="country" onchange="location.href='/stats/' + this.value">
+            {% for country in countries %}
+                <option value="{{ country }}">{{ country }}</option>
             {% endfor %}
         </select>
-
-        <label for="year">Year:</label>
-        <select name="year" id="year" required>
-            {% for y in years %}
-                <option value="{{ y }}">{{ y }}</option>
-            {% endfor %}
-        </select>
-
-        <fieldset>
-            <legend>Select Crime Types</legend>
-            {% for crime in crime_types %}
-                <input type="checkbox" name="crime_types" value="{{ crime }}" id="{{ crime }}">
-                <label for="{{ crime }}">{{ crime.replace("_", " ") }}</label><br>
-            {% endfor %}
-        </fieldset>
-
-        <button type="submit">View Stats</button>
     </form>
 </body>
 </html>
