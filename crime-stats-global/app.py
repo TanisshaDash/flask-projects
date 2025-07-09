@@ -1,22 +1,21 @@
 from flask import Flask, render_template, request
 import pandas as pd
-import json
 from combine_crime_data import generate_merged_crime_data
 
-# Re-merge every time the app starts
-data = generate_merged_crime_data()
+# 🔁 Generate or update the merged dataset on app start
+generate_merged_crime_data()
 
+# 📁 Load the merged CSV
+data = pd.read_csv('static/data/global_crime_data.csv')
 
-app = Flask(__name__)
-
-# Load data (sample global crime dataset - replace with your actual source)
-data = pd.read_csv('static/data/global_crime_data.csv') 
-
-# Preprocess: fill missing values and group by country
+# 🔧 Preprocess for dropdowns
 data.fillna(0, inplace=True)
 countries = sorted(data['Country'].unique())
 years = sorted(data['Year'].unique())
 crime_types = [col for col in data.columns if col not in ['Country', 'Year']]
+
+# 🚀 Flask app setup
+app = Flask(__name__)
 
 @app.route('/')
 def index():
