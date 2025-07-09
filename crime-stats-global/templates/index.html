@@ -1,34 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Global Crime Stats</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <h1>🌍 Global Crime Statistics</h1>
+
     <form method="POST" action="/stats">
-        <label for="country">Select Country:</label>
+        <label for="country">Country:</label>
         <select name="country" id="country" required>
-            {% for country in countries %}
-                <option value="{{ country }}">{{ country }}</option>
+            {% for c in countries %}
+                <option value="{{ c }}">{{ c }}</option>
             {% endfor %}
         </select>
 
-        <label for="year">Select Year:</label>
+        <label for="year">Year:</label>
         <select name="year" id="year" required>
-            {% for year in years %}
-                <option value="{{ year }}">{{ year }}</option>
+            {% for y in years %}
+                <option value="{{ y }}">{{ y }}</option>
             {% endfor %}
         </select>
 
         <fieldset>
-            <legend>Select Crime Types:</legend>
+            <legend>Select Crime Types</legend>
             {% for crime in crime_types %}
-                <label><input type="checkbox" name="crime_types" value="{{ crime }}"> {{ crime.replace('_', ' ') }}</label><br>
+                <input type="checkbox" name="crime_types" value="{{ crime }}" id="{{ crime }}">
+                <label for="{{ crime }}">{{ crime.replace("_", " ") }}</label><br>
             {% endfor %}
         </fieldset>
 
-        <button type="submit">Get Stats</button>
+        <button type="submit">View Stats</button>
     </form>
 </body>
 </html>
