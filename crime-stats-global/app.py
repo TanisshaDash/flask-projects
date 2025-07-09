@@ -10,7 +10,7 @@ data = generate_merged_crime_data()
 app = Flask(__name__)
 
 # Load data (sample global crime dataset - replace with your actual source)
-# data = pd.read_csv('static/data/global_crime_data.csv') 
+data = pd.read_csv('static/data/global_crime_data.csv') 
 
 # Preprocess: fill missing values and group by country
 data.fillna(0, inplace=True)

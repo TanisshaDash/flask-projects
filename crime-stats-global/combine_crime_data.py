@@ -15,7 +15,7 @@ def clean_excel(filepath, new_value_column_name):
     df[new_value_column_name] = pd.to_numeric(df[new_value_column_name], errors='coerce')
     return df.dropna()
 
-# 👇 Main function to combine all datasets
+#  Main function to combine all datasets
 def generate_merged_crime_data():
     # ✅ Clean each dataset
     corruption_df = clean_excel('data_cts_corruption_and_economic_crime.xlsx', 'Corruption_Econ_Crime')
@@ -26,7 +26,7 @@ def generate_merged_crime_data():
     charthomicide_df = clean_excel('data_portal_m49_regions- homicide.xlsx', 'Regional_Homicide_Rate')
     access_df = clean_excel('data_cts_access_and_functioning_of_justice.xlsx', 'Access_Justice')  
 
-    # 🔁 Merge all on 'Country' and 'Year'
+    #  Merge all on 'Country' and 'Year'
     merged_df = corruption_df \
         .merge(homicide_df, on=['Country', 'Year'], how='outer') \
         .merge(prisoners_df, on=['Country', 'Year'], how='outer') \
@@ -38,7 +38,6 @@ def generate_merged_crime_data():
     # 🧼 Fill blanks with 0
     merged_df.fillna(0, inplace=True)
 
-    # 💾 Save
     merged_df.to_excel('static/data/merged_global_crime_data.xlsx', index=False)
     print("✅ Merged data saved to static/data/global_crime_data.csv")
 
