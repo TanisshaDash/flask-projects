@@ -5,13 +5,8 @@ app = Flask(__name__)
 
 # Load the merged CSV
 def load_data():
-    try:
         df = pd.read_csv('static/data/global_crime_data.csv')
-        return df
-    except FileNotFoundError:
-        print("❌ Merged data file not found.")
-        return pd.DataFrame()
-
+      
 @app.route('/')
 def index():
     data = load_data()
