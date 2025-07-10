@@ -3,21 +3,20 @@ import pandas as pd
 def clean_csv(filepath, new_value_column_name):
     print(f"📄 Reading: {filepath}")
     df = pd.read_csv(filepath)
+    df.columns = df.columns.str.strip()  # ✅ Strips whitespace from column names
+    print("🧩 Columns:", df.columns.tolist())
 
-    # Ensure required columns exist
     expected = ['Country', 'Year', 'VALUE']
     if not all(col in df.columns for col in expected):
         print(f"❌ Required columns not found in {filepath}")
-        print("🧩 Columns:", df.columns.tolist())
-        return pd.DataFrame()  # Empty DataFrame if structure doesn't match
+        return pd.DataFrame()
 
     df = df[expected].copy()
     df.columns = ['Country', 'Year', new_value_column_name]
-
     df['Year'] = pd.to_numeric(df['Year'], errors='coerce')
     df[new_value_column_name] = pd.to_numeric(df[new_value_column_name], errors='coerce')
-
     return df.dropna()
+
 
 def generate_merged_crime_data():
     corruption_df = clean_csv("data_cts_corruption_and_economic_crime 6.csv", "Corruption_Economic_Crime")
