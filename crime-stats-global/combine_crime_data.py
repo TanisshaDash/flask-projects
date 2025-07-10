@@ -11,7 +11,7 @@ def clean_csv(filepath, new_value_column_name):
         print(f"❌ Required columns not found in {filepath}")
         return pd.DataFrame()
 
-    df = df[['Country or Area', 'Year', 'Value']].copy()
+    df = df[['Country or Area', 'Year', 'VALUE']].copy()
     df.columns = ['Country', 'Year', new_value_column_name]
     df.dropna(subset=['Country', 'Year'], inplace=True)
     df['Year'] = pd.to_numeric(df['Year'], errors='coerce')
