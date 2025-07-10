@@ -2,26 +2,87 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Crime Stats - {{ country }}</title>
+    <title>Crime Statistics</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+        }
+
+        header {
+            background-color: #343a40;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        main {
+            padding: 30px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        canvas {
+            margin-bottom: 40px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0px 2px 10px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
 <body>
-    <h1>📊 Crime Statistics for {{ country }}</h1>
-    <a href="/">← Back</a>
-    <table border="1">
-        <tr>
-            <th>Year</th>
-            {% for col in data.columns if col != 'Country' and col != 'Year' %}
-                <th>{{ col }}</th>
-            {% endfor %}
-        </tr>
-        {% for _, row in data.iterrows() %}
-            <tr>
-                <td>{{ row['Year'] }}</td>
-                {% for col in data.columns if col != 'Country' and col != 'Year' %}
-                    <td>{{ row[col] }}</td>
-                {% endfor %}
-            </tr>
+    <header>
+        <h1>Crime Statistics by Country (Latest Year)</h1>
+    </header>
+
+    <main>
+        {% for crime_type, data in charts.items() %}
+            <h2>{{ crime_type }}</h2>
+            <canvas id="chart_{{ loop.index }}" width="800" height="400"></canvas>
         {% endfor %}
-    </table>
+    </main>
+
+    <script id="charts-data" type="application/json">
+    {{ charts_json | tojson | safe }}
+</script>
+
+<script>
+    const chartsData = JSON.parse(
+        document.getElementById('charts-data').textContent
+    );
+    console.log(chartsData);
+
+    Object.keys(chartsData).forEach((crimeType, index) => {
+        const ctx = document.getElementById('chart_' + (index + 1)).getContext('2d');
+        const chartData = chartsData[crimeType];
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: chartData.countries,
+                datasets: [{
+                    label: crimeType,
+                    data: chartData.values,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+
 </body>
 </html>

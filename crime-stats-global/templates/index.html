@@ -2,17 +2,87 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Global Crime Statistics</title>
+    <title>Global Crime Data Explorer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+
+        header {
+            background-color: #222;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 32px;
+        }
+
+        main {
+            padding: 40px;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .card {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-    <h1>🌍 Global Crime Data Dashboard</h1>
-    <form action="/stats/{{ countries[0] }}" method="get">
-        <label for="country">Select a country:</label>
-        <select id="country" name="country" onchange="location.href='/stats/' + this.value">
-            {% for country in countries %}
-                <option value="{{ country }}">{{ country }}</option>
-            {% endfor %}
-        </select>
-    </form>
+
+    <header>
+        <h1>Global Crime Data Explorer</h1>
+    </header>
+
+    <main>
+        <div class="card">
+            <h2>Explore Statistics</h2>
+            <p>View visualized global crime data from multiple categories including:</p>
+            <ul>
+                <li>Corruption and Economic Crime</li>
+                <li>Intentional Homicide</li>
+                <li>Violent and Sexual Crime</li>
+                <li>Firearms Trafficking</li>
+                <li>Access and Functioning of Justice</li>
+            </ul>
+            <a class="btn" href="{{ url_for('stats') }}">View Stats →</a>
+        </div>
+
+        <div class="card">
+            <h2>About</h2>
+            <p>This project visualizes official datasets from multiple countries to track crime patterns across the world.</p>
+        </div>
+    </main>
+
 </body>
 </html>

@@ -29,7 +29,6 @@ def clean_csv(filepath, new_value_column_name):
     return df
 
 
-
 def generate_merged_crime_data():
     corruption_df = clean_csv("data_cts_corruption_and_economic_crime 6.csv", "Corruption_Economic_Crime")
     homicide_df = clean_csv("data_cts_intentional_homicide.csv", "Intentional_Homicide")
