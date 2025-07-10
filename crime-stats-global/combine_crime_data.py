@@ -1,21 +1,33 @@
 import pandas as pd
 
 def clean_csv(filepath, new_value_column_name):
-    print(f"📄 Reading: {filepath}")
-    df = pd.read_csv(filepath)
-    df.columns = df.columns.str.strip()  # ✅ Strips whitespace from column names
-    print("🧩 Columns:", df.columns.tolist())
-
-    expected = ['Country', 'Year', 'VALUE']
-    if not all(col in df.columns for col in expected):
-        print(f"❌ Required columns not found in {filepath}")
+    print(f"\n📄 Reading: {filepath}")
+    try:
+        df = pd.read_csv(filepath)
+    except Exception as e:
+        print(f"❌ Error reading {filepath}: {e}")
         return pd.DataFrame()
 
-    df = df[expected].copy()
-    df.columns = ['Country', 'Year', new_value_column_name]
+    df.columns = df.columns.str.strip()
+    print("🧩 Columns:", list(df.columns))
+
+    required_cols = ['Country', 'Year', 'VALUE']
+    if not all(col in df.columns for col in required_cols):
+        print(f"❌ Required columns missing in {filepath}")
+        return pd.DataFrame()
+
+    # Clean and reduce
+    df = df[['Country', 'Year', 'VALUE']].copy()
     df['Year'] = pd.to_numeric(df['Year'], errors='coerce')
-    df[new_value_column_name] = pd.to_numeric(df[new_value_column_name], errors='coerce')
-    return df.dropna()
+    df['VALUE'] = pd.to_numeric(df['VALUE'], errors='coerce')
+    df.dropna(subset=['Country', 'Year', 'VALUE'], inplace=True)
+
+    # Group and reduce duplicates by taking average
+    df = df.groupby(['Country', 'Year'], as_index=False).agg({ 'VALUE': 'mean' })
+    df.columns = ['Country', 'Year', new_value_column_name]
+
+    return df
+
 
 
 def generate_merged_crime_data():
