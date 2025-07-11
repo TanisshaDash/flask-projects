@@ -1,38 +1,51 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template
 import pandas as pd
+import json
 
 app = Flask(__name__)
 
-# Load the cleaned and merged crime data
-df = pd.read_csv("static/data/global_crime_data.csv")
-
-# Mapping readable labels to CSV column names
-headers_map = {
-    "Corruption and Economic Crime": "corruption_economic_crime",
-    "Homicide": "homicide",
-    "Violent and Sexual Crime": "violent_sexual_crime",
-    "Firearms Trafficking": "firearms_trafficking",
-    "Access and Functioning of Justice": "access_functioning_justice"
+# Label mapping for display purposes
+DISPLAY_LABELS = {
+    'corruption_and_economic_crime': 'Corruption and Economic Crime',
+    'intentional_homicide': 'Intentional Homicide',
+    'violent_and_sexual_crime': 'Violent and Sexual Crime',
+    'firearms_trafficking': 'Firearms Trafficking',
+    'access_and_functioning_of_justice': 'Access and Functioning of Justice'
 }
 
-# Home route – shows dropdown of countries
-@app.route("/")
+@app.route('/')
 def index():
-    countries = sorted(df["Country"].dropna().unique())
-    return render_template("index.html", countries=countries)
+    return render_template('index.html')
 
-# Stats route – shows crime data for selected country
 @app.route('/stats')
 def stats():
     df = pd.read_csv('static/data/global_crime_data.csv')
+
+    # Get the most recent year per country
     latest_year = df['Year'].max()
-    filtered_df = df[df['Year'] == latest_year]
+    recent_df = df[df['Year'] == latest_year]
 
-    crime_columns = ['Corruption and Economic Crime', 'Intentional Homicide', 'Violent and Sexual Crime', 'Firearms Trafficking', 'Access and Functioning of Justice']
-    values = [filtered_df[col].sum() for col in crime_columns]
+    # Prepare chart data using internal column names
+    chart_data = {}
 
-    return render_template('stats.html', headers=crime_columns, values=values)
+    for key in DISPLAY_LABELS.keys():
+        if key in recent_df.columns:
+            subset = recent_df[['Country', key]].dropna()
+            subset = subset.sort_values(by=key, ascending=False).head(10)  # Top 10 countries
+            chart_data[key] = {
+                'countries': subset['Country'].tolist(),
+                'values': subset[key].tolist()
+            }
 
+    # Map keys to readable chart titles
+    charts_display = {}
+    for key, data in chart_data.items():
+        label = DISPLAY_LABELS.get(key, key)
+        charts_display[label] = data
 
-if __name__ == "__main__":
+    return render_template('stats.html',
+                           charts=charts_display,
+                           charts_json=json.dumps(charts_display))
+
+if __name__ == '__main__':
     app.run(debug=True)

@@ -1,4 +1,4 @@
-Country,Year,Corruption_Economic_Crime,Intentional_Homicide,Firearms_Trafficking,Access_Justice,Violent_Sexual_Crime
+Country,Year,corruption_and_economic_crime,intentional_homicide,violent_and_sexual_crime,firearms_trafficking,access_and_functioning_of_justice
 Afghanistan,2009,78.36409,559.5297748491818,0.0,0.0,0.0
 Afghanistan,2010,0.0,493.23772614238567,0.0,0.0,0.0
 Afghanistan,2011,0.0,617.5972676980431,0.0,0.0,0.0
