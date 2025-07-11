@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Crime Statistics</title>
+    <title>Crime Statistics - {{ country }}</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
@@ -26,47 +26,60 @@
         }
 
         canvas {
-            margin-bottom: 40px;
+            margin-bottom: 50px;
             background-color: white;
             border-radius: 8px;
             box-shadow: 0px 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            margin-top: 40px;
+        }
+
+        .back-button {
+            display: block;
+            text-align: center;
+            margin: 20px;
+        }
+
+        .back-button a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-button a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Crime Statistics by Country (Latest Year)</h1>
+        <h1>Crime Statistics for {{ country }} (2019–2024)</h1>
     </header>
 
     <main>
-  {% for crime_type, data in charts.items() %}
-    <h2>{{ crime_type }}</h2>
-    <canvas id="chart_{{ loop.index }}" width="800" height="400"></canvas>
-
-<div style="margin-top: 10px; margin-bottom: 30px; font-size: 14px;">
-    <strong>Countries shown:</strong>
-    <ul style="list-style: none; padding-left: 0;">
-        {% for country in data.countries %}
-            <li>{{ country }}</li>
+        {% for crime_type, data in charts.items() %}
+            <h2>{{ crime_type }}</h2>
+            <canvas id="chart_{{ loop.index }}" width="800" height="400"></canvas>
         {% endfor %}
-    </ul>
-</div>
-  {% endfor %}
-</main>
+    </main>
 
+    <div class="back-button">
+        <a href="/">← Back to Country Selection</a>
+    </div>
 
-    <!-- Pass the charts data as a safe JSON string -->
+    <!-- Embed the data as JSON safely -->
     <script id="charts-data" type="application/json">
         {{ charts_json | tojson | safe }}
     </script>
 
     <script>
-        // Parse the embedded JSON safely
         const chartsData = JSON.parse(document.getElementById('charts-data').textContent);
 
         Object.keys(chartsData).forEach((crimeType, index) => {
             const canvas = document.getElementById('chart_' + (index + 1));
-            if (!canvas) return;  // skip if canvas is missing
+            if (!canvas) return;
 
             const ctx = canvas.getContext('2d');
             const chartData = chartsData[crimeType];
@@ -74,7 +87,7 @@
             new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: chartData.countries,
+                    labels: chartData.years,
                     datasets: [{
                         label: crimeType,
                         data: chartData.values,
@@ -84,11 +97,20 @@
                     }]
                 },
                 options: {
-                    indexAxis: 'y',
                     responsive: true,
                     scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Crime Count'
+                            }
+                        },
                         x: {
-                            beginAtZero: true
+                            title: {
+                                display: true,
+                                text: 'Year'
+                            }
                         }
                     }
                 }
