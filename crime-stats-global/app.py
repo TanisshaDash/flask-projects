@@ -21,29 +21,34 @@ def index():
 def stats():
     df = pd.read_csv('static/data/global_crime_data.csv')
 
-    # Get the most recent year per country
+    # ✅ Filter for years between 2019 and 2024
+    df = df[(df['Year'] >= 2019) & (df['Year'] <= 2024)]
+
+    # Get the most recent year from the filtered data
     latest_year = df['Year'].max()
     recent_df = df[df['Year'] == latest_year]
 
-    # Prepare chart data using internal column names
     chart_data = {}
-
-    for key in DISPLAY_LABELS.keys():
-        if key in recent_df.columns:
-            subset = recent_df[['Country', key]].dropna()
-            subset = subset.sort_values(by=key, ascending=False).head(10)  # Top 10 countries
-            chart_data[key] = {
-                'countries': subset['Country'].tolist(),
-                'values': subset[key].tolist()
-            }
-
-    # Map keys to readable chart titles
     charts_display = {}
-    for key, data in chart_data.items():
-        label = DISPLAY_LABELS.get(key, key)
-        charts_display[label] = data
 
-    return render_template('stats.html',charts=charts_display,charts_json=json.dumps(charts_display))
+    for internal, label in DISPLAY_LABELS.items():
+        if internal in recent_df.columns:
+            filtered = recent_df[['Country', internal]].dropna()
+            top_countries = filtered.sort_values(by=internal, ascending=False).head(10)
+
+            values = top_countries[internal].tolist()
+            countries = top_countries['Country'].tolist()
+
+            if any(v > 0 for v in values):
+                charts_display[label] = {
+                    'countries': countries,
+                    'values': values
+                }
+
+    print("📊 Charts JSON Preview:\n", json.dumps(charts_display, indent=2))
+    return render_template('stats.html', charts=charts_display, charts_json=json.dumps(charts_display))
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

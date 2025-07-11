@@ -39,50 +39,61 @@
     </header>
 
     <main>
-        {% for crime_type, data in charts.items() %}
-            <h2>{{ crime_type }}</h2>
-            <canvas id="chart_{{ loop.index }}" width="800" height="400"></canvas>
+  {% for crime_type, data in charts.items() %}
+    <h2>{{ crime_type }}</h2>
+    <canvas id="chart_{{ loop.index }}" width="800" height="400"></canvas>
+
+<div style="margin-top: 10px; margin-bottom: 30px; font-size: 14px;">
+    <strong>Countries shown:</strong>
+    <ul style="list-style: none; padding-left: 0;">
+        {% for country in data.countries %}
+            <li>{{ country }}</li>
         {% endfor %}
-    </main>
+    </ul>
+</div>
+  {% endfor %}
+</main>
 
+
+    <!-- Pass the charts data as a safe JSON string -->
     <script id="charts-data" type="application/json">
-    {{ charts_json | tojson | safe }}
-</script>
+        {{ charts_json | tojson | safe }}
+    </script>
 
-<script>
-    const chartsData = JSON.parse(
-        document.getElementById('charts-data').textContent
-    );
-    console.log(chartsData);
+    <script>
+        // Parse the embedded JSON safely
+        const chartsData = JSON.parse(document.getElementById('charts-data').textContent);
 
-    Object.keys(chartsData).forEach((crimeType, index) => {
-        const ctx = document.getElementById('chart_' + (index + 1)).getContext('2d');
-        const chartData = chartsData[crimeType];
+        Object.keys(chartsData).forEach((crimeType, index) => {
+            const canvas = document.getElementById('chart_' + (index + 1));
+            if (!canvas) return;  // skip if canvas is missing
 
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: chartData.countries,
-                datasets: [{
-                    label: crimeType,
-                    data: chartData.values,
-                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                scales: {
-                    x: {
-                        beginAtZero: true
+            const ctx = canvas.getContext('2d');
+            const chartData = chartsData[crimeType];
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: chartData.countries,
+                    datasets: [{
+                        label: crimeType,
+                        data: chartData.values,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    scales: {
+                        x: {
+                            beginAtZero: true
+                        }
                     }
                 }
-            }
+            });
         });
-    });
-</script>
-
-
+    </script>
 </body>
 </html>
