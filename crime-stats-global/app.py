@@ -43,9 +43,7 @@ def stats():
         label = DISPLAY_LABELS.get(key, key)
         charts_display[label] = data
 
-    return render_template('stats.html',
-                           charts=charts_display,
-                           charts_json=json.dumps(charts_display))
+    return render_template('stats.html',charts=charts_display,charts_json=json.dumps(charts_display))
 
 if __name__ == '__main__':
     app.run(debug=True)
