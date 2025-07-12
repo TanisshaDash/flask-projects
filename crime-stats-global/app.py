@@ -48,24 +48,32 @@ def stats():
     return render_template('stats.html', charts=chart_data, charts_json=json.dumps(chart_data))
 
 
-@app.route('/country/<country_name>')
-def country_stats(country_name):
+@app.route('/country/<country>')
+def country_stats(country):
     df = pd.read_csv('static/data/global_crime_data.csv')
-    df = df[(df['Year'] >= 2019) & (df['Year'] <= 2024)]
-    df = df[df['Country'] == country_name]
 
+    # Filter by selected country and years
+    df = df[(df['Country'] == country) & (df['Year'].between(2019, 2024))]
+
+    # Dictionary to hold the crime types and their yearly data
     chart_data = {}
 
-    for internal, label in DISPLAY_LABELS.items():
-        if internal in df.columns:
-            year_group = df[['Year', internal]].dropna().groupby('Year').sum()
-            chart_data[label] = {
-                'years': year_group.index.tolist(),
-                'values': year_group[internal].tolist()
-            }
-            print("📊 Charts JSON Preview:\n", json.dumps(chart_data, indent=2))
+    for internal_col, display_name in DISPLAY_LABELS.items():
+        if internal_col in df.columns:
+            yearly = df[['Year', internal_col]].dropna().groupby('Year').sum().reset_index()
+            valid_values = yearly[internal_col].tolist()
+            non_zero_years = [v for v in valid_values if v > 0]
 
-    return render_template('stats.html', country=country_name, charts=chart_data, charts_json=json.dumps(chart_data))
+        if len(non_zero_years) >= 2:
+            chart_data[display_name] = {
+                "years": yearly['Year'].tolist(),
+                "values": valid_values
+            }
+
+
+    print("📊 Charts JSON Preview:\n", json.dumps(chart_data, indent=2))
+    return render_template("stats.html", country=country, charts=chart_data, charts_json=json.dumps(chart_data))
+
 
 
 if __name__ == '__main__':
