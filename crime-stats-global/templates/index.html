@@ -16,12 +16,13 @@
     </select>
     <button type="button" onclick="goToCountry()">View Stats</button>
   </form>
-  
+
   <script>
     function goToCountry() {
       const country = document.getElementById("countrySelect").value;
       window.location.href = "/country/" + encodeURIComponent(country);
     }
   </script>
+  
 </body>
 </html>
