@@ -55,7 +55,6 @@ def country_stats(country):
     # Filter by selected country and years
     df = df[(df['Country'] == country) & (df['Year'].between(2019, 2024))]
 
-    # Dictionary to hold the crime types and their yearly data
     chart_data = {}
 
     for internal_col, display_name in DISPLAY_LABELS.items():
@@ -64,15 +63,15 @@ def country_stats(country):
             valid_values = yearly[internal_col].tolist()
             non_zero_years = [v for v in valid_values if v > 0]
 
-        if len(non_zero_years) >= 2:
-            chart_data[display_name] = {
-                "years": yearly['Year'].tolist(),
-                "values": valid_values
-            }
-
+            if len(non_zero_years) >= 2:  # 🟢 Put this inside the column check
+                chart_data[display_name] = {
+                    "years": yearly['Year'].tolist(),
+                    "values": valid_values
+                }
 
     print("📊 Charts JSON Preview:\n", json.dumps(chart_data, indent=2))
     return render_template("stats.html", country=country, charts=chart_data, charts_json=json.dumps(chart_data))
+
 
 
 
