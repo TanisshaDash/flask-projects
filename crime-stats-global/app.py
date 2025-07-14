@@ -12,33 +12,29 @@ DISPLAY_LABELS = {
     'access_and_functioning_of_justice': 'Access and Functioning of Justice'
 }
 
+DATA_PATH = 'static/data/cleaned_global_crime_data.csv'
+
 @app.route('/')
 def index():
-    df = pd.read_csv('static/data/global_crime_data.csv')
-    df = df[(df['Year'] >= 2019) & (df['Year'] <= 2024)]
-    
-    countries = sorted(df['Country'].dropna().unique().tolist())
+    df = pd.read_csv(DATA_PATH)
+    df = df[df['Year'].between(2019, 2024)]
+    countries = sorted(df['Country'].dropna().unique())
     return render_template('index.html', countries=countries)
 
 @app.route('/stats')
 def stats():
-    df = pd.read_csv('static/data/global_crime_data.csv')
-
-    # Filter to 2019–2024
-    filtered_df = df[df['Year'].between(2019, 2024)]
+    df = pd.read_csv(DATA_PATH)
+    df = df[df['Year'].between(2019, 2024)]
 
     chart_data = {}
 
     for internal, label in DISPLAY_LABELS.items():
-        if internal in filtered_df.columns:
-            # Group by Year and sum values
-            grouped = filtered_df.groupby('Year')[internal].sum().reset_index()
+        if internal in df.columns:
+            grouped = df.groupby('Year')[internal].sum().reset_index()
             years = grouped['Year'].tolist()
             values = grouped[internal].tolist()
 
-            # Filter: only include if at least 2 meaningful (non-zero) values
-            non_zero_values = [v for v in values if v > 0]
-            if len(non_zero_values) >= 2:
+            if any(v > 0 for v in values):
                 chart_data[label] = {
                     'years': years,
                     'values': values
@@ -47,12 +43,9 @@ def stats():
     print("📊 Charts JSON Preview:\n", json.dumps(chart_data, indent=2))
     return render_template('stats.html', charts=chart_data, charts_json=json.dumps(chart_data))
 
-
 @app.route('/country/<country>')
 def country_stats(country):
-    df = pd.read_csv('static/data/global_crime_data.csv')
-
-    # Filter by selected country and years
+    df = pd.read_csv(DATA_PATH)
     df = df[(df['Country'] == country) & (df['Year'].between(2019, 2024))]
 
     chart_data = {}
@@ -60,21 +53,16 @@ def country_stats(country):
     for internal_col, display_name in DISPLAY_LABELS.items():
         if internal_col in df.columns:
             yearly = df[['Year', internal_col]].dropna().groupby('Year').sum().reset_index()
-            valid_values = yearly[internal_col].tolist()
-            non_zero_years = [v for v in valid_values if v > 0]
-
-            if len(non_zero_years) >= 2:  # 🟢 Put this inside the column check
+            values = yearly[internal_col].tolist()
+            if any(v > 0 for v in values):
                 chart_data[display_name] = {
                     "years": yearly['Year'].tolist(),
-                    "values": valid_values
+                    "values": values
                 }
 
     print("📊 Charts JSON Preview:\n", json.dumps(chart_data, indent=2))
-    return render_template("stats.html", country=country, charts=chart_data, charts_json=json.dumps(chart_data))
-
-
+    return render_template('stats.html', charts=chart_data, charts_json=chart_data)
 
 
 if __name__ == '__main__':
-    app.run(debug=True) 
-
+    app.run(debug=True)

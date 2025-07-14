@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Crime Statistics {{ 'for ' + country if country else '(2019–2024)' }}</title>
+    <title>Crime Statistics</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
@@ -35,48 +35,21 @@
         h2 {
             margin-top: 40px;
         }
-
-        .back-button {
-            display: block;
-            text-align: center;
-            margin: 20px;
-        }
-
-        .back-button a {
-            color: #007bff;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .back-button a:hover {
-            text-decoration: underline;
-        }
     </style>
 </head>
 <body>
     <header>
-        <h1>
-            {% if country %}
-                Crime Statistics for {{ country }} (2019–2024)
-            {% else %}
-                Global Crime Statistics (2019–2024)
-            {% endif %}
-        </h1>
+        <h1>Crime Statistics (2019–2024)</h1>
     </header>
 
     <main>
         {% for crime_type, data in charts.items() %}
             <h2>{{ crime_type }}</h2>
             <canvas id="chart_{{ loop.index }}" width="800" height="400"></canvas>
-        {% else %}
-            <p>No crime data available for this country/year range.</p>
         {% endfor %}
     </main>
 
-    <div class="back-button">
-        <a href="/">← Back to Country Selection</a>
-    </div>
-
+    <!-- Embed charts data -->
     <script id="charts-data" type="application/json">
         {{ charts_json | tojson | safe }}
     </script>
@@ -92,17 +65,17 @@
             const chartData = chartsData[crimeType];
 
             new Chart(ctx, {
-                type: 'bar', // ← use 'bar' if preferred
+                type: 'bar',
                 data: {
                     labels: chartData.years,
                     datasets: [{
                         label: crimeType,
                         data: chartData.values,
-                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.4)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
                         borderWidth: 2,
                         fill: false,
-                        tension: 0.3 // smooth lines
+                        tension: 0.1
                     }]
                 },
                 options: {
