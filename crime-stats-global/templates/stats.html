@@ -44,9 +44,9 @@
 
     <main>
         {% for crime_type, data in charts.items() %}
-            <h2>{{ crime_type }}</h2>
-            <canvas id="chart_{{ loop.index }}" width="800" height="400"></canvas>
-        {% endfor %}
+    <h2>{{ crime_type }}</h2>
+    <canvas id="chart_{{ crime_type | replace(' ', '_') | lower }}"></canvas>
+{% endfor %}
     </main>
 
     <!-- Embed charts data -->
@@ -57,47 +57,49 @@
     <script>
         const chartsData = JSON.parse(document.getElementById('charts-data').textContent);
 
-        Object.keys(chartsData).forEach((crimeType, index) => {
-            const canvas = document.getElementById('chart_' + (index + 1));
-            if (!canvas) return;
+        Object.keys(chartsData).forEach((crimeType) => {
+    const chartId = "chart_" + crimeType.replace(/ /g, "_").toLowerCase();
+    const canvas = document.getElementById(chartId);
+    if (!canvas) return;
 
-            const ctx = canvas.getContext('2d');
-            const chartData = chartsData[crimeType];
+    const ctx = canvas.getContext('2d');
+    const chartData = chartsData[crimeType];
 
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: chartData.years,
-                    datasets: [{
-                        label: crimeType,
-                        data: chartData.values,
-                        backgroundColor: 'rgba(75, 192, 192, 0.4)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 2,
-                        fill: false,
-                        tension: 0.1
-                    }]
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: chartData.years,
+            datasets: [{
+                label: crimeType,
+                data: chartData.values,
+                backgroundColor: 'rgba(75, 192, 192, 0.4)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 2,
+                fill: false,
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Crime Count'
+                    }
                 },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Crime Count'
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Year'
-                            }
-                        }
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Year'
                     }
                 }
-            });
-        });
+            }
+        }
+    });
+});
+
     </script>
 </body>
 </html>
