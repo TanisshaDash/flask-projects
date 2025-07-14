@@ -12,7 +12,7 @@ DISPLAY_LABELS = {
     'access_and_functioning_of_justice': 'Access and Functioning of Justice'
 }
 
-DATA_PATH = 'static/data/cleaned_global_crime_data.csv'
+DATA_PATH = 'static/data/global_crime_data.csv'
 
 @app.route('/')
 def index():
@@ -41,7 +41,7 @@ def stats():
                 }
 
     print("📊 Charts JSON Preview:\n", json.dumps(chart_data, indent=2))
-    return render_template('stats.html', charts=chart_data, charts_json=json.dumps(chart_data))
+    return render_template('stats.html', charts=chart_data, charts_json=(chart_data))
 
 @app.route('/country/<country>')
 def country_stats(country):
