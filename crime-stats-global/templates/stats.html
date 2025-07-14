@@ -45,8 +45,7 @@
     <main>
         {% for crime_type, data in charts.items() %}
     <h2>{{ crime_type }}</h2>
-    <canvas id="chart_{{ crime_type | replace(' ', '_') | lower }}"></canvas>
-{% endfor %}
+    <canvas id="chart_{{ crime_type | replace(' ', '_') | lower }}"></canvas> {% endfor %}
     </main>
 
     <!-- Embed charts data -->
