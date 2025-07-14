@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Crime Statistics - {{ country }}</title>
+    <title>Crime Statistics {{ 'for ' + country if country else '(2019–2024)' }}</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
@@ -55,13 +55,21 @@
 </head>
 <body>
     <header>
-        <h1>Crime Statistics for {{ country }} (2019–2024)</h1>
+        <h1>
+            {% if country %}
+                Crime Statistics for {{ country }} (2019–2024)
+            {% else %}
+                Global Crime Statistics (2019–2024)
+            {% endif %}
+        </h1>
     </header>
 
     <main>
         {% for crime_type, data in charts.items() %}
             <h2>{{ crime_type }}</h2>
             <canvas id="chart_{{ loop.index }}" width="800" height="400"></canvas>
+        {% else %}
+            <p>No crime data available for this country/year range.</p>
         {% endfor %}
     </main>
 
@@ -69,7 +77,6 @@
         <a href="/">← Back to Country Selection</a>
     </div>
 
-    <!-- Embed the data as JSON safely -->
     <script id="charts-data" type="application/json">
         {{ charts_json | tojson | safe }}
     </script>
@@ -85,7 +92,7 @@
             const chartData = chartsData[crimeType];
 
             new Chart(ctx, {
-                type: 'line',
+                type: 'bar', // ← use 'bar' if preferred
                 data: {
                     labels: chartData.years,
                     datasets: [{
@@ -93,7 +100,9 @@
                         data: chartData.values,
                         backgroundColor: 'rgba(54, 162, 235, 0.6)',
                         borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.3 // smooth lines
                     }]
                 },
                 options: {
