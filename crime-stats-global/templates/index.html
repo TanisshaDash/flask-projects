@@ -1,28 +1,60 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Select Country</title>
+  <meta charset="UTF-8">
+  <title>Crime Statistics Dashboard</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f2f4f6;
+      text-align: center;
+      padding: 60px;
+    }
+    .container {
+      background: #fff;
+      padding: 40px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 10px;
+    }
+    select, button {
+      padding: 10px;
+      width: 100%;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
 </head>
 <body>
-
-  <h1>Select a Country to View Crime Data</h1>
-  
-  <form method="get" action="">
-    <select id="countrySelect" name="country">
-
-      {% for country in countries %}
+  <div class="container">
+    <h1>Global Crime Statistics</h1>
+    <form action="/country" method="get">
+      <select name="country" required>
+        <option value="">Select Country</option>
+        {% for country in countries %}
         <option value="{{ country }}">{{ country }}</option>
-      {% endfor %}
-    </select>
-    <button type="button" onclick="goToCountry()">View Stats</button>
-  </form>
+        {% endfor %}
+      </select>
 
-  <script>
-    function goToCountry() {
-      const country = document.getElementById("countrySelect").value;
-      window.location.href = "/country/" + encodeURIComponent(country);
-    }
-  </script>
-  
+      <button type="submit">View Stats</button>
+    </form>
+
+    <br><hr><br>
+
+    <form action="/stats" method="get">
+      <button>View Global Statistics</button>
+    </form>
+  </div>
 </body>
 </html>

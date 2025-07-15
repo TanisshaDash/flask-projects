@@ -33,15 +33,22 @@ def stats():
             grouped = df.groupby('Year')[internal].sum().reset_index()
             years = grouped['Year'].tolist()
             values = grouped[internal].tolist()
-
             if any(v > 0 for v in values):
                 chart_data[label] = {
                     'years': years,
                     'values': values
                 }
 
-    print("📊 Charts JSON Preview:\n", json.dumps(chart_data, indent=2))
-    return render_template('stats.html', charts=chart_data, charts_json=(chart_data))
+    return render_template('stats.html', charts=chart_data, charts_json=chart_data)
+
+
+@app.route('/map')
+def crime_map():
+    df = pd.read_csv(DATA_PATH)
+    df = df[df['Year'] == 2023]
+    country_values = df.groupby("Country")["intentional_homicide"].sum().to_dict()
+    return render_template("map.html", crime_data=json.dumps(country_values))
+
 
 @app.route('/country/<country>')
 def country_stats(country):
