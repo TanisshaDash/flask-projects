@@ -10,6 +10,7 @@
       text-align: center;
       padding: 60px;
     }
+
     .container {
       background: #fff;
       padding: 40px;
@@ -18,6 +19,7 @@
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
       border-radius: 10px;
     }
+
     select, button {
       padding: 10px;
       width: 100%;
@@ -25,36 +27,56 @@
       border: 1px solid #ccc;
       border-radius: 5px;
     }
+
     button {
       background-color: #007bff;
       color: white;
       font-weight: bold;
       cursor: pointer;
     }
+
     button:hover {
       background-color: #0056b3;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #ddd;
+      margin: 30px 0;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Global Crime Statistics</h1>
-    <form action="/country" method="get">
-      <select name="country" required>
+
+    <!-- Country-specific stats -->
+    <form onsubmit="handleCountrySubmit(event)">
+      <select id="country" required>
         <option value="">Select Country</option>
         {% for country in countries %}
         <option value="{{ country }}">{{ country }}</option>
         {% endfor %}
       </select>
-
-      <button type="submit">View Stats</button>
+      <button type="submit">View Country Stats</button>
     </form>
 
-    <br><hr><br>
+    <hr>
 
-    <form action="/stats" method="get">
-      <button>View Global Statistics</button>
+    <!-- Global stats -->
+    <form action="{{ url_for('stats') }}" method="get">
+      <button type="submit">View Global Statistics</button>
     </form>
   </div>
+
+  <script>
+    function handleCountrySubmit(event) {
+      event.preventDefault();
+      const selected = document.getElementById('country').value;
+      if (selected) {
+        window.location.href = '/country/' + encodeURIComponent(selected);
+      }
+    }
+  </script>
 </body>
 </html>
