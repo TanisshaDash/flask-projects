@@ -1,79 +1,115 @@
-/* General Styles */
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #f4f6f8;
+  font-family: 'Source Sans Pro', sans-serif;
+  background-color: #fafafa;
+  color: #222;
 }
 
-header {
-  background-color: #343a40;
-  color: white;
-  padding: 40px 60px;
+.main-wrapper {
+  max-width: 850px;
+  margin: auto;
+  padding: 50px 20px;
+  text-align: center;
 }
 
-header h1 {
-  margin: 0;
-  font-size: 36px;
+/* Header styles */
+.page-title {
+  font-size: 48px;
+  font-weight: 700;
+  color: #880e4f;
+  margin-bottom: 10px;
 }
 
-/* Sections */
-.section {
-  padding: 40px 60px;
-}
-
-.intro, .top-countries, .stats-section {
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 0 8px rgba(0,0,0,0.05);
-  padding: 30px;
+.subheading {
+  font-size: 20px;
+  color: #444;
   margin-bottom: 30px;
 }
 
-/* Intro text */
-.intro p {
+/* Descriptions */
+.description {
   font-size: 18px;
+  line-height: 1.7;
   color: #444;
-  line-height: 1.6;
-  text-align: justify;
+  margin: 10px 0;
 }
 
-/* Top countries list */
-.top-countries h2 {
-  margin-top: 0;
+.description .highlight {
+  color: #880e4f;
+  font-weight: 600;
+}
+
+.description.emphasis {
+  font-size: 22px;
+  font-weight: 600;
   color: #333;
+  margin-top: 30px;
 }
 
-.top-countries ol {
-  font-size: 17px;
-  line-height: 1.8;
-}
-
-/* Dropdown and buttons */
-select, button {
-  padding: 12px;
-  width: 100%;
-  margin: 12px 0;
+.description.small-text {
   font-size: 16px;
-  border-radius: 6px;
+  color: #555;
+}
+
+.description a {
+  color: #1565c0;
+  text-decoration: none;
+}
+.description a:hover {
+  text-decoration: underline;
+}
+
+/* Forms */
+.form-box {
+  margin-top: 30px;
+  margin-bottom: 50px;
+}
+
+select, button {
+  padding: 12px 16px;
+  font-size: 16px;
+  margin: 8px;
+  border-radius: 5px;
   border: 1px solid #ccc;
 }
 
 button {
-  background-color: #007bff;
+  background-color: #1976d2;
   color: white;
   font-weight: bold;
-  cursor: pointer;
   border: none;
+  cursor: pointer;
 }
 
 button:hover {
-  background-color: #0056b3;
+  background-color: #0d47a1;
 }
 
-/* Responsive sizing */
-@media (min-width: 768px) {
-  select, button {
-    width: 300px;
-  }
+.secondary-btn {
+  background-color: #555;
+}
+
+.secondary-btn:hover {
+  background-color: #333;
+}
+
+/* Top 10 section */
+.top10-section {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  text-align: left;
+}
+
+.top10-section h2 {
+  margin-top: 0;
+  color: #333;
+  font-size: 22px;
+}
+
+.top10-section ol {
+  padding-left: 20px;
+  line-height: 1.8;
 }
