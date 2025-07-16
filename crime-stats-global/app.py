@@ -1,6 +1,6 @@
-from flask import Flask, render_template, request
-import pandas as pd
-import json
+from flask import Flask, render_template, request,  redirect, url_for       
+import pandas as pd , json 
+
 
 app = Flask(__name__)
 
@@ -27,7 +27,7 @@ def index():
 
     top_10 = country_totals.to_dict(orient='records')
 
-    return render_template('index.html', countries=countries, top_10=top_10)
+    return render_template('index.html', countries=countries, top_10=top_10 , get_flag=get_flag)
 
 
 @app.route('/stats')
@@ -48,7 +48,7 @@ def stats():
                     'values': values
                 }
 
-    return render_template('stats.html', charts=chart_data, charts_json=chart_data)
+    return render_template('stats.html', charts=chart_data, charts_json=chart_data, country=None)
 
 
 @app.route('/map')
@@ -57,6 +57,25 @@ def crime_map():
     df = df[df['Year'] == 2023]
     country_values = df.groupby("Country")["intentional_homicide"].sum().to_dict()
     return render_template("map.html", crime_data=json.dumps(country_values))
+
+
+@app.route('/get_flag')
+def get_flag(country_name):
+    try:
+        from countryinfo import CountryInfo
+        country_code = CountryInfo(country_name).info().get('ISO', {}).get('alpha2')
+        if not country_code:
+            return ''
+        return chr(127462 + ord(country_code[0]) - 65) + chr(127462 + ord(country_code[1]) - 65)
+    except:
+        return ''
+
+
+
+@app.route('/country')
+def country_redirect():
+    country = request.args.get("country")
+    return redirect(url_for('country_stats', country=country))
 
 
 @app.route('/country/<country>')
@@ -77,7 +96,7 @@ def country_stats(country):
                 }
 
     print("📊 Charts JSON Preview:\n", json.dumps(chart_data, indent=2))
-    return render_template('stats.html', charts=chart_data, charts_json=chart_data)
+    return render_template('stats.html', charts=chart_data, charts_json=chart_data, country=country )
 
 
 if __name__ == '__main__':

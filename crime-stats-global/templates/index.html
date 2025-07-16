@@ -34,18 +34,18 @@
       </form>
     </div>
 
-    <div class="top10-section animate-slide">
-      <h2>🌐 Crime Leaderboard (2019–2024)</h2>
-      <ul class="leaderboard">
-        {% for item in top_10 %}
-          <li>
-            <span class="flag-icon">{{ loop.index }}.</span>
-            <strong>{{ item['Country'] }}</strong>
-            <span class="crime-count">{{ "{:,.0f}".format(item['total_crime']) }} crimes</span>
-          </li>
-        {% endfor %}
-      </ul>
-    </div>
+    <div class="top10-section">
+  <h2>Top 10 Countries by Total Crime (2019–2024)</h2>
+  <ul class="leaderboard">
+    {% for item in top_10 %}
+      <li style="--i: {{ loop.index }}">
+        <span class="flag-icon">{{ get_flag(item['Country']) }} {{ item['Country'] }}</span>
+        <span class="crime-count">{{ "{:,}".format(item['total_crime']) }} crimes</span>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+
   </div>
 
   <script>

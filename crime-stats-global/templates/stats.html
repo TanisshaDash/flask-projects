@@ -59,8 +59,15 @@
 </head>
 <body>
   <header>
-    <h1>{{ country if country else 'Global Crime Statistics (2019–2024)' }}</h1>
-  </header>
+    <h1>
+  {% if country %}
+    {{ get_flag(country) }} Statistics for {{ country }} (2019–2024)
+  {% else %}
+    🌍 Global Crime Statistics (2019–2024)
+  {% endif %}
+    </h1>
+</header>
+
 
   <div class="filter-container">
     <label for="filterSelect"><strong>Filter by Crime Type:</strong></label>

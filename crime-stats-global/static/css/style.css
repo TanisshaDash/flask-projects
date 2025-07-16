@@ -1,88 +1,100 @@
+/* General Layout */
 body {
   margin: 0;
   padding: 0;
   font-family: 'Source Sans Pro', sans-serif;
-  background-color: #fafafa;
-  color: #222;
+  background-color: #f5f7fa;
+  color: #333;
+  line-height: 1.6;
 }
 
 .main-wrapper {
-  max-width: 850px;
+  max-width: 1000px;
   margin: auto;
-  padding: 50px 20px;
-  text-align: center;
+  padding: 60px 20px;
 }
 
-/* Header styles */
+/* Title Section */
 .page-title {
   font-size: 48px;
   font-weight: 700;
-  color: #880e4f;
+  color: #1565c0;
+  text-align: center;
   margin-bottom: 10px;
 }
 
+.page-title .blue-text {
+  color: #1565c0;
+}
+
 .subheading {
+  text-align: center;
   font-size: 20px;
-  color: #444;
+  color: #555;
   margin-bottom: 30px;
 }
 
-/* Descriptions */
 .description {
-  font-size: 18px;
-  line-height: 1.7;
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 20px auto;
+  font-size: 16px;
   color: #444;
-  margin: 10px 0;
 }
 
 .description .highlight {
-  color: #880e4f;
+  color: #d32f2f;
   font-weight: 600;
 }
 
 .description.emphasis {
-  font-size: 22px;
   font-weight: 600;
-  color: #333;
-  margin-top: 30px;
+  font-size: 18px;
 }
 
 .description.small-text {
-  font-size: 16px;
-  color: #555;
+  font-size: 15px;
+  color: #666;
 }
 
-.description a {
-  color: #1565c0;
-  text-decoration: none;
-}
-.description a:hover {
-  text-decoration: underline;
-}
-
-/* Forms */
+/* Form */
 .form-box {
   margin-top: 40px;
-  background: #f9f9f9;
+  background: #ffffff;
   padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+  border-radius: 12px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
 }
 
-select, button {
-  padding: 12px 16px;
-  font-size: 16px;
-  margin: 8px;
-  border-radius: 5px;
+select {
+  padding: 12px;
+  width: 100%;
+  max-width: 400px;
   border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+  margin: auto;
+  display: block;
+}
+
+.button-row {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
 }
 
 button {
+  padding: 12px 18px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
   background-color: #1976d2;
   color: white;
-  font-weight: bold;
-  border: none;
+  font-weight: 600;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 button:hover {
@@ -90,29 +102,98 @@ button:hover {
 }
 
 .secondary-btn {
-  background-color: #555;
+  background-color: #444;
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
 }
 
 .secondary-btn:hover {
-  background-color: #333;
+  background-color: #222;
 }
 
-/* Top 10 section */
+/* Top 10 Crime Leaderboard */
 .top10-section {
   background-color: #fff;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  text-align: left;
+  padding: 35px;
+  margin-top: 60px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+  text-align: center;
 }
 
 .top10-section h2 {
-  margin-top: 0;
-  color: #333;
-  font-size: 22px;
+  margin-bottom: 25px;
+  font-size: 24px;
+  color: #0d47a1;
 }
 
-.top10-section ol {
-  padding-left: 20px;
-  line-height: 1.8;
+.leaderboard {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.leaderboard li {
+  display: flex;
+  justify-content: space-between;
+  background: #f1f1f1;
+  margin-bottom: 10px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 17px;
+  font-weight: 500;
+  animation: fadeInUp 0.5s ease forwards;
+  opacity: 0;
+}
+
+.leaderboard li:nth-child(n) {
+  animation-delay: calc(0.05s * var(--i));
+}
+
+.crime-count {
+  color: #555;
+}
+
+.flag-icon {
+  margin-right: 10px;
+  font-weight: bold;
+  color: #1976d2;
+}
+
+/* Animations */
+.animate-fade {
+  animation: fadeIn 0.7s ease-in;
+}
+
+.animate-slide {
+  animation: slideUp 0.8s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Utilities */
+.visually-hidden {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
 }
