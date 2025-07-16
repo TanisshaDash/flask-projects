@@ -13,39 +13,38 @@
     <p class="subheading">Opening up global crime data</p>
 
     <p class="description">
-      <span class="highlight">Crime Around the World</span> is a dashboard that visualizes crime trends across countries from <strong>2019 to 2024</strong>. It helps you explore different types of crimes, such as <em>intentional homicide</em>, <em>corruption</em>, and <em>firearms trafficking</em> — without having to dig through complex data files or PDFs.
+      <span class="highlight">Crime Around the World</span> gives you an easy way to explore different types of crime across nations from <strong>2019 to 2024</strong>. Understand trends, compare countries, and uncover insights from global reports.
     </p>
 
-    <p class="description emphasis">
-      Understand your region. Compare global crime levels.
-    </p>
-    <p class="description small-text">
-      Choose a country to begin, or browse global statistics. You can also <a href="/map">view the map</a> for 2023 data.
-    </p>
+    <p class="description emphasis">Begin your exploration below 👇</p>
 
-    <div class="form-box">
+    <div class="form-box animate-fade">
       <form onsubmit="handleCountrySubmit(event)">
+        <label for="country" class="visually-hidden">Choose a country</label>
         <select id="country" required>
           <option value="">Select a country</option>
           {% for country in countries %}
             <option value="{{ country }}">{{ country }}</option>
           {% endfor %}
         </select>
-        <button type="submit">Show Stats</button>
-      </form>
-
-      <form action="{{ url_for('stats') }}" method="get">
-        <button type="submit" class="secondary-btn">🌍 View Global Stats</button>
+        <div class="button-row">
+          <button type="submit">📊 Show Stats</button>
+          <a href="{{ url_for('stats') }}" class="secondary-btn">🌍 View Global Stats</a>
+        </div>
       </form>
     </div>
 
-    <div class="top10-section">
-      <h2>Top 10 Countries by Total Crime (2019–2024)</h2>
-      <ol>
+    <div class="top10-section animate-slide">
+      <h2>🌐 Crime Leaderboard (2019–2024)</h2>
+      <ul class="leaderboard">
         {% for item in top_10 %}
-          <li><strong>{{ item['Country'] }}</strong>: {{ "{:,.0f}".format(item['total_crime']) }} crimes</li>
+          <li>
+            <span class="flag-icon">{{ loop.index }}.</span>
+            <strong>{{ item['Country'] }}</strong>
+            <span class="crime-count">{{ "{:,.0f}".format(item['total_crime']) }} crimes</span>
+          </li>
         {% endfor %}
-      </ol>
+      </ul>
     </div>
   </div>
 
@@ -60,4 +59,5 @@
   </script>
 
 </body>
+
 </html>
