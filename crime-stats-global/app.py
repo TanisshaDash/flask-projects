@@ -18,8 +18,17 @@ DATA_PATH = 'static/data/global_crime_data.csv'
 def index():
     df = pd.read_csv(DATA_PATH)
     df = df[df['Year'].between(2019, 2024)]
+
     countries = sorted(df['Country'].dropna().unique())
-    return render_template('index.html', countries=countries)
+
+    # Add top 10 by total crime count (summing all DISPLAY_LABEL columns)
+    df['total_crime'] = df[list(DISPLAY_LABELS.keys())].sum(axis=1)
+    country_totals = df.groupby('Country')['total_crime'].sum().sort_values(ascending=False).head(10).reset_index()
+
+    top_10 = country_totals.to_dict(orient='records')
+
+    return render_template('index.html', countries=countries, top_10=top_10)
+
 
 @app.route('/stats')
 def stats():

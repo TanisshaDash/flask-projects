@@ -49,6 +49,14 @@
 <body>
   <div class="container">
     <h1>Global Crime Statistics</h1>
+    
+    <h3>🌍 Top 10 Countries with Highest Total Crime (2019–2024)</h3>
+   <ol style="text-align: left; padding-left: 20px;">
+   {% for item in top_10 %}
+    <li><strong>{{ item['Country'] }}</strong>: {{ "{:,.0f}".format(item['total_crime']) }} cases</li>
+   {% endfor %}
+   </ol>
+
 
     <!-- Country-specific stats -->
     <form onsubmit="handleCountrySubmit(event)">
