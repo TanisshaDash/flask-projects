@@ -5,23 +5,123 @@
   <title>Global Crime Dashboard</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      display: flex;
+      background-color: #121212;
+      color: #f0f0f0;
+      font-family: 'Source Sans Pro', sans-serif;
+      margin: 0;
+    }
+
+    .main-wrapper {
+      width: 50%;
+      padding: 60px;
+    }
+
+    .sidebar {
+      width: 50%;
+      background: #1e1e1e;
+      padding: 40px;
+      border-left: 2px solid #2a2a2a;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .page-title {
+      font-size: 2.5rem;
+      color: #4da3ff;
+      margin-bottom: 10px;
+    }
+
+    .subheading {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      color: #cccccc;
+    }
+
+    .description {
+      font-size: 1rem;
+      margin-bottom: 20px;
+      color: #dddddd;
+    }
+
+    .highlight {
+      color: #4da3ff;
+      font-weight: bold;
+    }
+
+    .form-box {
+      background: #222;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+
+    select, button, .secondary-btn {
+      padding: 12px;
+      width: 100%;
+      margin-top: 10px;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: none;
+    }
+
+    button {
+      background-color: #4da3ff;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .secondary-btn {
+      display: inline-block;
+      text-align: center;
+      text-decoration: none;
+      background: #333;
+      color: #ddd;
+    }
+
+    .sidebar h2 {
+      font-size: 1.5rem;
+      color: #ffffff;
+      margin-bottom: 20px;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar li {
+      padding: 12px 0;
+      border-bottom: 1px solid #444;
+      display: flex;
+      justify-content: space-between;
+      font-size: 1rem;
+    }
+
+    .flag-icon {
+      font-weight: bold;
+      color: #4da3ff;
+    }
+
+    .crime-count {
+      color: #bbbbbb;
+    }
+
+    @media screen and (max-width: 900px) {
+      body {
+        flex-direction: column;
+      }
+      .main-wrapper, .sidebar {
+        width: 100%;
+        height: auto;
+      }
+    }
+  </style>
 </head>
 <body>
-
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <h2>Top 10 Countries (2019–2024)</h2>
-    <ul>
-      {% for item in top_10 %}
-        {% if item['Country'] != 'Senegal' %}
-        <li>
-          <span class="flag-icon">{{ item['Country'] }}</span>
-          <span class="crime-count">{{ "{:,}".format(item['total_crime']) }} crimes</span>
-        </li>
-        {% endif %}
-      {% endfor %}
-    </ul>
-  </div>
 
   <!-- MAIN CONTENT -->
   <div class="main-wrapper">
@@ -32,23 +132,35 @@
       <span class="highlight">Crime Around the World</span> gives you an easy way to explore different types of crime across nations from <strong>2019 to 2024</strong>. Understand trends, compare countries, and uncover insights from global reports.
     </p>
 
-    <p class="description emphasis">Begin your exploration below 👇</p>
+    <p class="description">Begin your exploration below 👇</p>
 
-    <div class="form-box animate-fade">
+    <div class="form-box">
       <form onsubmit="handleCountrySubmit(event)">
-        <label for="country" class="visually-hidden">Choose a country</label>
         <select id="country" required>
           <option value="">Select a country</option>
           {% for country in countries %}
             <option value="{{ country }}">{{ country }}</option>
           {% endfor %}
         </select>
-        <div class="button-row">
-          <button type="submit">📊 Show Stats</button>
-          <a href="{{ url_for('stats') }}" class="secondary-btn">🌍 View Global Stats</a>
-        </div>
+        <button type="submit">📊 Show Stats</button>
+        <a href="{{ url_for('stats') }}" class="secondary-btn">🌍 View Global Stats</a>
       </form>
     </div>
+  </div>
+
+  <!-- RIGHT SIDEBAR -->
+  <div class="sidebar">
+    <h2>Top 10 Countries (2019–2024)</h2>
+    <ul>
+      {% for item in top_10 %}
+        {% if item['Country'] != 'Senegal' %}
+        <li>
+          <span class="flag-icon">{{ item['Country'] }}</span>
+          <span class="crime-count">{{ "{:,.0f}".format(item['total_crime']) }} crimes</span>
+        </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
   </div>
 
   <script>
