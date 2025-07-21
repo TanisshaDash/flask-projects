@@ -39,7 +39,7 @@
   <ul class="leaderboard">
     {% for item in top_10 %}
       <li style="--i: {{ loop.index }}">
-        <span class="flag-icon">{{ get_flag(item['Country']) }} {{ item['Country'] }}</span>
+        <span class="flag-icon">{{ item['Country'] }}</span>
         <span class="crime-count">{{ "{:,}".format(item['total_crime']) }} crimes</span>
       </li>
     {% endfor %}
