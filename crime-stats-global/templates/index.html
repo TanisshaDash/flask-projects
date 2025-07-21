@@ -8,6 +8,22 @@
 </head>
 <body>
 
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <h2>Top 10 Countries (2019–2024)</h2>
+    <ul>
+      {% for item in top_10 %}
+        {% if item['Country'] != 'Senegal' %}
+        <li>
+          <span class="flag-icon">{{ item['Country'] }}</span>
+          <span class="crime-count">{{ "{:,}".format(item['total_crime']) }} crimes</span>
+        </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
+
+  <!-- MAIN CONTENT -->
   <div class="main-wrapper">
     <h1 class="page-title">Crime Around the World</h1>
     <p class="subheading">Opening up global crime data</p>
@@ -33,19 +49,6 @@
         </div>
       </form>
     </div>
-
-    <div class="top10-section">
-  <h2>Top 10 Countries by Total Crime (2019–2024)</h2>
-  <ul class="leaderboard">
-    {% for item in top_10 %}
-      <li style="--i: {{ loop.index }}">
-        <span class="flag-icon">{{ item['Country'] }}</span>
-        <span class="crime-count">{{ "{:,}".format(item['total_crime']) }} crimes</span>
-      </li>
-    {% endfor %}
-  </ul>
-</div>
-
   </div>
 
   <script>
@@ -59,5 +62,4 @@
   </script>
 
 </body>
-
 </html>
