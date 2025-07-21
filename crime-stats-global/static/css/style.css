@@ -59,6 +59,7 @@ button, .secondary-btn {
   text-decoration: none;
   display: inline-block;
   width: auto;
+  min-width: 120px;
 }
 
 .secondary-btn {

@@ -10,16 +10,15 @@
       font-family: 'Segoe UI', sans-serif;
       margin: 0;
       padding: 30px;
-      background: #121212;
-      color: #f0f0f0;
+      background: #0d0d0d;
+      color: #f1f1f1;
     }
 
     header {
-      background: #1e1e1e;
-      color: #81b3ff;
+      background: #1a1a1a;
+      color: #fff;
       padding: 20px;
       text-align: center;
-      border-bottom: 1px solid #333;
     }
 
     .chart-section {
@@ -31,161 +30,139 @@
       box-shadow: 0 0 10px rgba(0,0,0,0.2);
     }
 
+    .chart-section h2 {
+      color: #42a5f5;
+      margin-bottom: 10px;
+    }
+
     select, button {
       margin: 10px;
-      padding: 8px 14px;
+      padding: 10px 20px;
       border-radius: 5px;
       border: 1px solid #444;
-      font-size: 15px;
-      background-color: #222;
-      color: #f0f0f0;
+      background: #222;
+      color: white;
+      font-size: 16px;
     }
 
     button {
-      background-color: #007bff;
-      color: white;
-      cursor: pointer;
+      background-color: #0066ff;
+      border: none;
     }
 
     button:hover {
-      background-color: #0056b3;
-    }
-
-    canvas {
-      max-width: 100%;
-      background-color: #fff;
+      background-color: #0050cc;
     }
 
     .filter-container {
       text-align: center;
-      margin-top: 20px;
-      margin-bottom: 30px;
-    }
-
-    h2 {
-      color: #ffffff;
-      margin-bottom: 20px;
-      font-weight: 600;
-    }
-
-    label {
-      font-weight: bold;
-      margin-right: 8px;
+      margin-top: 30px;
     }
   </style>
 </head>
 <body>
+  <header>
+    <h1>
+      {% if country %}
+        Statistics for {{ country }} (2019–2024)
+      {% else %}
+        Global Crime Statistics (2019–2024)
+      {% endif %}
+    </h1>
+  </header>
 
-<header>
-  <h1>
-    {% if country %}
-      Statistics for {{ country }} (2019–2024)
-    {% else %}
-      Global Crime Statistics (2019–2024)
-    {% endif %}
-  </h1>
-</header>
+  <div class="filter-container">
+    <label for="filterSelect"><strong>Filter by Crime Type:</strong></label>
+    <select id="filterSelect">
+      <option value="all">Show All</option>
+      {% for crime_type in charts.keys() %}
+        <option value="{{ crime_type }}">{{ crime_type }}</option>
+      {% endfor %}
+    </select>
 
-<div class="filter-container">
-  <label for="filterSelect">Filter by Crime Type:</label>
-  <select id="filterSelect">
-    <option value="all">Show All</option>
-    {% for crime_type in charts.keys() %}
-      <option value="{{ crime_type }}">{{ crime_type }}</option>
+    <button onclick="window.location='/map'">🗺 Map View</button>
+    <button onclick="window.location='/'">🏠 Back to Home</button>
+  </div>
+
+  <div id="charts-container">
+    {% for crime_type, data in charts.items() %}
+      <div class="chart-section" data-chart-type="{{ crime_type }}">
+        <h2>{{ crime_type }}</h2>
+        <canvas id="chart_{{ crime_type | replace(' ', '_') | lower }}"></canvas>
+        <button onclick="downloadChart('{{ loop.index }}', '{{ crime_type }}')">⬇ Download Chart</button>
+      </div>
     {% endfor %}
-  </select>
+  </div>
 
-  <button onclick="window.location='/map'">🗺 Map View</button>
-  <button onclick="window.location='/'">🏠 Back to Home</button>
-</div>
+  <script id="charts-data" type="application/json">
+    {{ charts_json | tojson | safe }}
+  </script>
 
-<div id="charts-container">
-  {% for crime_type, data in charts.items() %}
-    <div class="chart-section" data-chart-type="{{ crime_type }}">
-      <h2>{{ crime_type }}</h2>
-      <canvas id="chart_{{ crime_type | replace(' ', '_') | lower }}"></canvas>
-      <button onclick="downloadChart('{{ loop.index }}', '{{ crime_type }}')">⬇ Download Chart</button>
-    </div>
-  {% endfor %}
-</div>
+  <script>
+    const chartsData = JSON.parse(document.getElementById('charts-data').textContent);
+    const chartObjects = [];
 
-<script id="charts-data" type="application/json">
-  {{ charts_json | tojson | safe }}
-</script>
+    Object.entries(chartsData).forEach(([crimeType, crimeData]) => {
+      const canvasId = 'chart_' + crimeType.replace(/ /g, "_").toLowerCase();
+      const ctx = document.getElementById(canvasId).getContext('2d');
 
-<script>
-  const chartsData = JSON.parse(document.getElementById('charts-data').textContent);
-  const chartObjects = [];
-
-  Object.entries(chartsData).forEach(([crimeType, crimeData]) => {
-    const canvasId = 'chart_' + crimeType.replace(/ /g, "_").toLowerCase();
-    const ctx = document.getElementById(canvasId).getContext('2d');
-
-    const chart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: crimeData.years,
-        datasets: [{
-          label: crimeType,
-          data: crimeData.values,
-          backgroundColor: 'rgba(54, 162, 235, 0.3)',
-          borderColor: 'rgba(54, 162, 235, 1)',
-          borderWidth: 2,
-          pointRadius: 4,
-          fill: false 
-        }]
-
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { display: true }
+      const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: crimeData.years,
+          datasets: [{
+            label: crimeType,
+            data: crimeData.values,
+            backgroundColor: 'transparent',
+            borderColor: 'rgba(66, 165, 245, 1)',
+            borderWidth: 2,
+            pointRadius: 4,
+            fill: false
+          }]
         },
-        scales: {
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: 'Crime Count',
-              color: '#aaa'
-            },
-            ticks: {
-              color: '#ccc'
-            }
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: true }
           },
-          x: {
-            title: {
-              display: true,
-              text: 'Year',
-              color: '#aaa'
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Crime Count'
+              }
             },
-            ticks: {
-              color: '#ccc'
+            x: {
+              title: {
+                display: true,
+                text: 'Year'
+              }
             }
           }
         }
-      }
+      });
+
+      chartObjects.push(chart);
     });
-  });
 
-  document.getElementById('filterSelect').addEventListener('change', function () {
-    const selected = this.value;
-    const sections = document.querySelectorAll('.chart-section');
-
-    sections.forEach(section => {
-      const chartType = section.getAttribute('data-chart-type');
-      section.style.display = (selected === 'all' || chartType === selected) ? 'block' : 'none';
+    document.getElementById('filterSelect').addEventListener('change', function () {
+      const selected = this.value;
+      const sections = document.querySelectorAll('.chart-section');
+      sections.forEach(section => {
+        const chartType = section.getAttribute('data-chart-type');
+        section.style.display = (selected === 'all' || chartType === selected) ? 'block' : 'none';
+      });
     });
-  });
 
-  function downloadChart(index, name) {
-    const chartCanvas = document.getElementById('chart_' + index);
-    const url = chartCanvas.toDataURL('image/png');
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${name}.png`;
-    link.click();
-  }
-</script>
+    function downloadChart(index, name) {
+      const canvas = document.getElementById('chart_' + name.replace(/ /g, "_").toLowerCase());
+      const url = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${name}.png`;
+      link.click();
+    }
+  </script>
 </body>
 </html>
