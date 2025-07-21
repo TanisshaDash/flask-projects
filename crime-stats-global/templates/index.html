@@ -125,16 +125,15 @@
 
   <!-- MAIN CONTENT -->
   <div class="main-wrapper">
+  <div class="left-section">
     <h1 class="page-title">Crime Around the World</h1>
     <p class="subheading">Opening up global crime data</p>
-
     <p class="description">
-      <span class="highlight">Crime Around the World</span> gives you an easy way to explore different types of crime across nations from <strong>2019 to 2024</strong>. Understand trends, compare countries, and uncover insights from global reports.
+      <span class="highlight">Crime Around the World</span> gives you an easy way to explore different types of crime across nations from <strong>2019 to 2024</strong>.
     </p>
+    <p class="description emphasis">Begin your exploration below 👇</p>
 
-    <p class="description">Begin your exploration below 👇</p>
-
-    <div class="form-box">
+    <div class="form-box animate-fade">
       <form onsubmit="handleCountrySubmit(event)">
         <select id="country" required>
           <option value="">Select a country</option>
@@ -142,26 +141,29 @@
             <option value="{{ country }}">{{ country }}</option>
           {% endfor %}
         </select>
-        <button type="submit">📊 Show Stats</button>
-        <a href="{{ url_for('stats') }}" class="secondary-btn">🌍 View Global Stats</a>
+        <div class="button-row">
+          <button type="submit">📊 Show Stats</button>
+          <a href="{{ url_for('stats') }}" class="secondary-btn">🌍 View Global Stats</a>
+        </div>
       </form>
     </div>
   </div>
 
-  <!-- RIGHT SIDEBAR -->
-  <div class="sidebar">
-    <h2>Top 10 Countries (2019–2024)</h2>
-    <ul>
-      {% for item in top_10 %}
-        {% if item['Country'] != 'Senegal' %}
+  <div class="right-sidebar">
+    <div class="top10-section">
+      <h2>Top 10 Countries by Total Crime (2019–2024)</h2>
+      <ul class="leaderboard">
+        {% for item in top_10 if item['Country'] != 'Senegal' %}
         <li>
           <span class="flag-icon">{{ item['Country'] }}</span>
           <span class="crime-count">{{ "{:,.0f}".format(item['total_crime']) }} crimes</span>
         </li>
-        {% endif %}
-      {% endfor %}
-    </ul>
+        {% endfor %}
+      </ul>
+    </div>
   </div>
+</div>
+
 
   <script>
     function handleCountrySubmit(event) {

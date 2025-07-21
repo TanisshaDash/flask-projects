@@ -1,166 +1,134 @@
-/* ==== Global Dark Mode Styles ==== */
-:root {
-  --bg-color: #1e1e1e;
-  --text-color: #eee;
-  --card-bg: #2a2a2a;
-  --accent: #3399ff;
-  --border-color: #555;
-}
-
 body {
-  font-family: 'Source Sans Pro', sans-serif;
   margin: 0;
-  padding: 0;
-  background: var(--bg-color);
-  color: var(--text-color);
-  transition: background 0.3s, color 0.3s;
+  font-family: 'Source Sans Pro', sans-serif;
+  background-color: #121212;
+  color: #f0f0f0;
 }
 
-/* ==== Page Layout ==== */
 .main-wrapper {
-  padding: 60px 20px 20px 250px; /* leaves room for sidebar */
-  max-width: 1200px;
-  margin: auto;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.left-section {
+  width: 50%;
+  padding: 2rem;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.right-sidebar {
+  width: 50%;
+  background-color: #1e1e1e;
+  padding: 2rem;
+  box-sizing: border-box;
+  overflow-y: auto;
+  border-left: 2px solid #333;
 }
 
 .page-title {
-  font-size: 36px;
-  color: var(--accent);
-  margin-bottom: 10px;
+  font-size: 2.5rem;
+  color: #81b3ff;
+  margin-bottom: 0.5rem;
 }
 
 .subheading {
-  font-size: 18px;
-  color: var(--text-color);
+  font-size: 1.2rem;
+  color: #ccc;
+  margin-bottom: 2rem;
 }
 
 .description {
-  margin: 20px 0;
-  font-size: 16px;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  line-height: 1.6;
 }
 
 .description .highlight {
+  color: #81b3ff;
   font-weight: bold;
-  color: var(--accent);
 }
 
-.emphasis {
-  font-style: italic;
-}
-
-/* ==== Form & Buttons ==== */
-.form-box {
-  background: var(--card-bg);
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  max-width: 600px;
-  margin-bottom: 30px;
-}
-
-select, button, .secondary-btn {
-  padding: 10px;
-  margin: 10px 0;
+.form-box select {
   width: 100%;
-  font-size: 16px;
-  border-radius: 6px;
-  border: 1px solid var(--border-color);
-  background: var(--card-bg);
-  color: var(--text-color);
-  transition: background 0.2s, color 0.2s;
+  padding: 0.6rem;
+  margin-bottom: 1rem;
+  background-color: #222;
+  color: #fff;
+  border: 1px solid #555;
 }
 
-button {
-  background-color: var(--accent);
+.button-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+button, .secondary-btn {
+  background-color: #007bff;
   color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
   cursor: pointer;
-  font-weight: 600;
+  border-radius: 5px;
+  white-space: nowrap;
+  transition: background 0.3s;
 }
 
-button:hover {
-  background-color: #1c75d8;
+button:hover, .secondary-btn:hover {
+  background-color: #0056b3;
 }
 
 .secondary-btn {
-  display: inline-block;
-  text-align: center;
-  background-color: transparent;
+  background-color: #444;
   text-decoration: none;
-  font-weight: bold;
 }
 
-/* ==== Top 10 Sidebar Leaderboard ==== */
-.sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 220px;
-  height: 100%;
-  background: var(--card-bg);
-  border-right: 1px solid var(--border-color);
-  box-shadow: 2px 0 6px rgba(0,0,0,0.1);
-  padding: 30px 15px;
-  overflow-y: auto;
-  z-index: 1000;
+.secondary-btn:hover {
+  background-color: #666;
 }
 
-.sidebar h2 {
-  font-size: 20px;
-  margin-bottom: 15px;
-  color: var(--accent);
+.top10-section h2 {
+  margin-top: 0;
+  color: #f4f4f4;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
 }
 
-.sidebar ul {
+.leaderboard {
   list-style: none;
   padding: 0;
-  margin: 0;
 }
 
-.sidebar li {
+.leaderboard li {
+  background-color: #2c2c2c;
+  margin-bottom: 0.8rem;
+  padding: 1rem;
+  border-radius: 8px;
   display: flex;
   justify-content: space-between;
-  padding: 10px 5px;
-  background: rgba(255,255,255,0.05);
-  margin-bottom: 8px;
-  border-radius: 6px;
-  font-size: 15px;
+  align-items: center;
 }
 
-.sidebar .flag-icon {
-  font-weight: 600;
-  color: var(--text-color);
+.leaderboard .flag-icon {
+  font-weight: bold;
+  color: #fff;
 }
 
-.sidebar .crime-count {
-  font-size: 14px;
-  color: var(--text-color);
-}
-
-/* ==== Utility ==== */
-.animate-fade {
-  animation: fadeIn 0.6s ease-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.visually-hidden {
-  position: absolute;
-  left: -9999px;
+.leaderboard .crime-count {
+  color: #aaa;
+  font-size: 0.95rem;
 }
 
 @media (max-width: 768px) {
   .main-wrapper {
-    padding-left: 20px;
+    flex-direction: column;
   }
 
-  .sidebar {
-    position: static;
+  .left-section,
+  .right-sidebar {
     width: 100%;
-    border-right: none;
-    border-bottom: 1px solid var(--border-color);
-    box-shadow: none;
   }
 }
