@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Crime Statistics - {{ country if country else 'Global' }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
