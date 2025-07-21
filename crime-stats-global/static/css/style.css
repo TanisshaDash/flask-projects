@@ -1,134 +1,113 @@
 body {
+  background-color: #0f0f0f;
+  color: #fff;
+  font-family: 'Segoe UI', sans-serif;
   margin: 0;
-  font-family: 'Source Sans Pro', sans-serif;
-  background-color: #121212;
-  color: #f0f0f0;
+  padding: 0;
 }
 
-.main-wrapper {
+.dashboard-container {
   display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   height: 100vh;
   overflow: hidden;
 }
 
-.left-section {
+/* LEFT PANEL */
+.intro-section {
   width: 50%;
-  padding: 2rem;
+  padding: 40px 60px;
   box-sizing: border-box;
   overflow-y: auto;
-}
-
-.right-sidebar {
-  width: 50%;
-  background-color: #1e1e1e;
-  padding: 2rem;
-  box-sizing: border-box;
-  overflow-y: auto;
-  border-left: 2px solid #333;
 }
 
 .page-title {
   font-size: 2.5rem;
-  color: #81b3ff;
-  margin-bottom: 0.5rem;
+  color: #4da6ff;
+  margin-bottom: 10px;
 }
 
 .subheading {
-  font-size: 1.2rem;
   color: #ccc;
-  margin-bottom: 2rem;
+  font-size: 1.2rem;
 }
 
 .description {
   font-size: 1rem;
-  margin-bottom: 1rem;
-  line-height: 1.6;
+  margin: 15px 0;
 }
 
-.description .highlight {
-  color: #81b3ff;
+.description.emphasis {
   font-weight: bold;
 }
 
-.form-box select {
-  width: 100%;
-  padding: 0.6rem;
-  margin-bottom: 1rem;
-  background-color: #222;
+.highlight {
   color: #fff;
-  border: 1px solid #555;
+  font-weight: 600;
 }
 
-.button-row {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
+/* BUTTONS */
 button, .secondary-btn {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  font-weight: bold;
-  cursor: pointer;
+  padding: 10px 16px;
+  font-size: 16px;
   border-radius: 5px;
-  white-space: nowrap;
-  transition: background 0.3s;
-}
-
-button:hover, .secondary-btn:hover {
-  background-color: #0056b3;
+  border: none;
+  margin-right: 10px;
+  background-color: #1e90ff;
+  color: #fff;
+  text-decoration: none;
+  display: inline-block;
+  width: auto;
 }
 
 .secondary-btn {
   background-color: #444;
-  text-decoration: none;
 }
 
-.secondary-btn:hover {
-  background-color: #666;
+button:hover, .secondary-btn:hover {
+  opacity: 0.85;
 }
 
-.top10-section h2 {
-  margin-top: 0;
-  color: #f4f4f4;
+/* RIGHT PANEL: SIDEBAR */
+.top10-sidebar {
+  width: 50%;
+  background-color: #1a1a1a;
+  padding: 40px 30px;
+  overflow-y: auto;
+  box-sizing: border-box;
+  border-left: 1px solid #333;
+}
+
+.top10-sidebar h2 {
   font-size: 1.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 20px;
 }
 
 .leaderboard {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
 .leaderboard li {
-  background-color: #2c2c2c;
-  margin-bottom: 0.8rem;
-  padding: 1rem;
-  border-radius: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background-color: #2a2a2a;
+  border-radius: 6px;
+  padding: 12px 18px;
+  margin-bottom: 12px;
+  font-weight: 500;
+  color: #ddd;
 }
 
-.leaderboard .flag-icon {
-  font-weight: bold;
+.flag-icon {
+  font-weight: 600;
   color: #fff;
 }
 
-.leaderboard .crime-count {
-  color: #aaa;
+.crime-count {
+  color: #bbb;
   font-size: 0.95rem;
-}
-
-@media (max-width: 768px) {
-  .main-wrapper {
-    flex-direction: column;
-  }
-
-  .left-section,
-  .right-sidebar {
-    width: 100%;
-  }
 }

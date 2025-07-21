@@ -124,17 +124,21 @@
 <body>
 
   <!-- MAIN CONTENT -->
-  <div class="main-wrapper">
-  <div class="left-section">
+  <div class="dashboard-container">
+  <!-- LEFT PANEL -->
+  <div class="intro-section">
     <h1 class="page-title">Crime Around the World</h1>
     <p class="subheading">Opening up global crime data</p>
+
     <p class="description">
-      <span class="highlight">Crime Around the World</span> gives you an easy way to explore different types of crime across nations from <strong>2019 to 2024</strong>.
+      <span class="highlight">Crime Around the World</span> gives you an easy way to explore different types of crime across nations from <strong>2019 to 2024</strong>. Understand trends, compare countries, and uncover insights from global reports.
     </p>
+
     <p class="description emphasis">Begin your exploration below 👇</p>
 
     <div class="form-box animate-fade">
       <form onsubmit="handleCountrySubmit(event)">
+        <label for="country" class="visually-hidden">Choose a country</label>
         <select id="country" required>
           <option value="">Select a country</option>
           {% for country in countries %}
@@ -149,20 +153,20 @@
     </div>
   </div>
 
-  <div class="right-sidebar">
-    <div class="top10-section">
-      <h2>Top 10 Countries by Total Crime (2019–2024)</h2>
-      <ul class="leaderboard">
-        {% for item in top_10 if item['Country'] != 'Senegal' %}
+  <!-- RIGHT PANEL: SIDEBAR -->
+  <aside class="top10-sidebar">
+    <h2>Top 10 Countries by Total Crime (2019–2024)</h2>
+    <ul class="leaderboard">
+      {% for item in top_10 %}
         <li>
           <span class="flag-icon">{{ item['Country'] }}</span>
           <span class="crime-count">{{ "{:,.0f}".format(item['total_crime']) }} crimes</span>
         </li>
-        {% endfor %}
-      </ul>
-    </div>
-  </div>
+      {% endfor %}
+    </ul>
+  </aside>
 </div>
+
 
 
   <script>
