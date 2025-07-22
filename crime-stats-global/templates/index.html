@@ -107,6 +107,7 @@
 
     <p class="description">Begin your exploration below 👇</p>
 
+
     <div class="form-box">
       <form onsubmit="handleCountrySubmit(event)">
         <label for="country" class="visually-hidden">Choose a country</label>
@@ -124,6 +125,15 @@
     </div>
   </div>
 
+  <div class="city-tagline">
+    <h2>Know your Country, Track different kinds of crimes.</h2>
+  <p>
+    Explore trends across the globe. Choose from 
+    <a href="{{ url_for('stats') }}">crime categories</a> or 
+    <a href="{{ url_for('map') }}">view the map</a> for regional insights.
+  </p>
+   </div>
+
   <div class="main-right">
     <div class="top10-section">
       <h2>Top 20 Countries by Total Crime (2019–2024)</h2>
@@ -137,6 +147,7 @@
       </ul>
     </div>
   </div>
+
 
   <script>
     function handleCountrySubmit(event) {

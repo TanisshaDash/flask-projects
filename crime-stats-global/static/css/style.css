@@ -111,4 +111,35 @@ button:hover, .secondary-btn:hover {
 .crime-count {
   color: #bbb;
   font-size: 0.95rem;
+  
 }
+.city-tagline {
+  margin-top: 40px;
+  margin-bottom: 40px;
+  padding: 20px;
+  background-color: #1e1e1e;
+  border-left: 5px solid #4dabf7;
+  border-radius: 8px;
+}
+
+.city-tagline h2 {
+  font-size: 1.8rem;
+  color: #ffffff;
+  margin-bottom: 10px;
+}
+
+.city-tagline p {
+  font-size: 1.1rem;
+  color: #cccccc;
+}
+
+.city-tagline a {
+  color: #4dabf7;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.city-tagline a:hover {
+  text-decoration: underline;
+}
+
