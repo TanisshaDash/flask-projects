@@ -131,7 +131,7 @@
         {% for item in top_10 %}
           <li>
             <span>{{ item['Country'] }}</span>
-            <span>{{ "{:,}".format(item['total_crime'] | round) }} crimes</span>
+            <span class="crime-count">{{ "{:,}".format(item['total_crime']|int) }} crimes</span>
           </li>
         {% endfor %}
       </ul>
