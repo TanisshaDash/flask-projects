@@ -12,11 +12,18 @@
       background: #0d0d0d;
       color: #f1f1f1;
       display: flex;
+      flex-direction: row;
+      min-height: 100vh;
     }
+
     .main-left {
       flex: 1;
       padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
     }
+
     .main-right {
       width: 50vw;
       max-width: 700px;
@@ -24,24 +31,30 @@
       padding: 40px;
       overflow-y: auto;
     }
+
     h1.page-title {
       font-size: 2.8rem;
       font-weight: 800;
       color: #3399ff;
+      margin-bottom: 10px;
     }
+
     .subheading {
       font-size: 1.3rem;
       color: #ccc;
     }
+
     .description {
       font-size: 1.1rem;
       max-width: 600px;
       margin-top: 15px;
     }
+
     .highlight {
       color: #66ccff;
       font-weight: bold;
     }
+
     .form-box select {
       padding: 12px;
       font-size: 1rem;
@@ -51,12 +64,14 @@
       border-radius: 6px;
       width: 100%;
     }
+
     .button-row {
       margin-top: 15px;
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
     }
+
     .button-row button,
     .button-row a {
       background: #3399ff;
@@ -69,21 +84,26 @@
       font-size: 1rem;
       width: fit-content;
     }
+
     .secondary-btn {
       background: #444;
     }
+
     .top10-section {
       margin-top: 40px;
     }
+
     .top10-section h2 {
       font-size: 1.5rem;
       margin-bottom: 20px;
     }
+
     .leaderboard {
       list-style: none;
       padding: 0;
       margin: 0;
     }
+
     .leaderboard li {
       display: flex;
       justify-content: space-between;
@@ -92,6 +112,28 @@
       margin-bottom: 10px;
       border-radius: 6px;
       font-weight: 600;
+    }
+
+    .city-tagline {
+      margin-top: 30px;
+      font-size: 1.1rem;
+      max-width: 600px;
+    }
+
+    .city-tagline h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .city-tagline p {
+      color: #ccc;
+    }
+
+    .city-tagline a {
+      color: #66ccff;
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -105,8 +147,17 @@
       <span class="highlight">Crime Around the World</span> gives you an easy way to explore different types of crime across nations from <strong>2019 to 2024</strong>. Understand trends, compare countries, and uncover insights from global reports.
     </p>
 
-    <p class="description">Begin your exploration below 👇</p>
+    <!-- 🔽 New tagline section -->
+    <div class="city-tagline">
+      <h2>Know your country. Track different kinds of crimes.</h2>
+      <p>
+        Explore trends across the globe. Choose from 
+        <a href="{{ url_for('stats') }}">crime categories</a> 
+        <a href="{{ url_for('crime_map') }}">view the map</a> 
+      </p>
+    </div>
 
+    <p class="description">Begin your exploration below 👇</p>
 
     <div class="form-box">
       <form onsubmit="handleCountrySubmit(event)">
@@ -125,15 +176,6 @@
     </div>
   </div>
 
-  <div class="city-tagline">
-    <h2>Know your Country, Track different kinds of crimes.</h2>
-  <p>
-    Explore trends across the globe. Choose from 
-    <a href="{{ url_for('stats') }}">crime categories</a> or 
-    <a href="{{ url_for('map') }}">view the map</a> for regional insights.
-  </p>
-   </div>
-
   <div class="main-right">
     <div class="top10-section">
       <h2>Top 20 Countries by Total Crime (2019–2024)</h2>
@@ -147,7 +189,6 @@
       </ul>
     </div>
   </div>
-
 
   <script>
     function handleCountrySubmit(event) {
