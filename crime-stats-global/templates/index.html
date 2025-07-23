@@ -20,21 +20,23 @@
       flex: 1;
       padding: 40px;
       display: flex;
+      background: #11004d;
       flex-direction: column;
-      justify-content: flex-start;
+      justify-content: center;
     }
 
     .main-right {
       width: 50vw;
       max-width: 700px;
-      background: #161616;
+      background: #4d0101;
       padding: 40px;
       overflow-y: auto;
+      
     }
 
     h1.page-title {
       font-size: 2.8rem;
-      font-weight: 800;
+      font-weight: 900;
       color: #3399ff;
       margin-bottom: 10px;
     }
@@ -66,21 +68,21 @@
     }
 
     .button-row {
-      margin-top: 15px;
+      margin-top: 18px;
       display: flex;
-      gap: 10px;
+      gap: 20px;
       flex-wrap: wrap;
     }
 
     .button-row button,
     .button-row a {
-      background: #3399ff;
+      background: #0b6821;
       color: white;
       padding: 10px 18px;
       border: none;
-      border-radius: 6px;
+      border-radius: 15px;
       text-decoration: none;
-      font-weight: 600;
+      font-weight: 700;
       font-size: 1rem;
       width: fit-content;
     }
@@ -90,7 +92,7 @@
     }
 
     .top10-section {
-      margin-top: 40px;
+      margin-top: 30px;
     }
 
     .top10-section h2 {
@@ -108,7 +110,7 @@
       display: flex;
       justify-content: space-between;
       background: #262626;
-      padding: 12px 16px;
+      padding: 15px 16px;
       margin-bottom: 10px;
       border-radius: 6px;
       font-weight: 600;
@@ -116,7 +118,7 @@
 
     .city-tagline {
       margin-top: 30px;
-      font-size: 1.1rem;
+      font-size: 0.9rem;
       max-width: 600px;
     }
 
@@ -152,7 +154,7 @@
       <h2>Know your country. Track different kinds of crimes.</h2>
       <p>
         Explore trends across the globe. 
-        <a href="{{ url_for('crime_map') }}">View the map</a> 
+        <a href="{{ url_for('crime_map') }}"> 🗺 View the map</a> 
       </p>
     </div>
 
