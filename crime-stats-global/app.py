@@ -25,10 +25,7 @@ def index():
     df['total_crime'] = df[list(DISPLAY_LABELS.keys())].sum(axis=1)
     country_totals = df.groupby('Country')['total_crime'].sum().sort_values(ascending=False).reset_index()
 
-    # Remove Senegal manually if needed
-    country_totals = country_totals[country_totals['Country'] != 'Senegal']
 
-    # Get top 20 countries after removing Senegal
     top_20 = country_totals.head(20).to_dict(orient='records')
 
     return render_template('index.html', countries=countries, top_10=top_20)
