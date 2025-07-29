@@ -76,6 +76,8 @@ def country_stats(country):
                     "years": yearly['Year'].tolist(),
                     "values": values
                 }
-                return render_template('stats.html', charts=chart_data, charts_json=chart_data, country=country)
+
+   
+    return render_template('stats.html', charts=chart_data, charts_json=chart_data, country=country)
 if __name__ == '__main__':
     app.run(debug=True)
