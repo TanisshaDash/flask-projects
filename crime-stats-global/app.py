@@ -12,7 +12,7 @@ DISPLAY_LABELS = {
     'access_and_functioning_of_justice': 'Access and Functioning of Justice'
 }
 
-DATA_PATH = 'static/data/global_crime_data.csv'
+DATA_PATH = 'https://raw.githubusercontent.com/TanisshaDash/flask-projects/refs/heads/main/crime-stats-global/static/data/global_crime_data.csv'
 
 @app.route('/')
 def index():
