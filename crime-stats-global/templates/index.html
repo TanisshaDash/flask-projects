@@ -1,232 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Global Crime Dashboard</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Source Sans Pro', sans-serif;
-      background: #0d0d0d;
-      color: #f1f1f1;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-
-
-    .main-container {
-      display: flex;
-      flex: 1;
-      flex-direction: row;
-    }
-
-    .main-left {
-      flex: 1;
-      padding: 40px;
-      display: flex;
-      background: #11004d;
-      flex-direction: column;
-      justify-content: flex-start;
-    }
-
-    .main-right {
-      width: 50vw;
-      max-width: 700px;
-      background: #4d0101;
-      padding: 40px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-    }
-
-    h1.page-title {
-      font-size: 3rem;
-      font-weight: 900;
-      color: #3399ff;
-      margin-bottom: 10px;
-      text-align: center;
-    }
-
-    .subheading {
-      font-size: 1.5rem;
-      color: #ccc;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .description {
-      font-size: 1.2rem;
-      max-width: 90%;
-      text-align: center;
-      margin: 0 auto 25px auto;
-    }
-
-    .highlight {
-      color: #66ccff;
-      font-weight: bold;
-    }
-
-    .form-box {
-      max-width: 500px;
-      margin: 0 auto;
-    }
-
-    .form-box select {
-      padding: 12px;
-      font-size: 1rem;
-      background: #222;
-      color: #f1f1f1;
-      border: 1px solid #444;
-      border-radius: 6px;
-      width: 100%;
-    }
-
-    .button-row {
-      margin-top: 18px;
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .button-row button,
-    .button-row a {
-      background: #0b6821;
-      color: white;
-      padding: 10px 18px;
-      border: none;
-      border-radius: 15px;
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 1rem;
-      width: fit-content;
-    }
-
-    .secondary-btn {
-      background: #444;
-    }
-
-    .top10-section {
-      margin-top: 30px;
-    }
-
-    .top10-section h2 {
-      font-size: 1.5rem;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
-    .leaderboard {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .leaderboard li {
-      display: flex;
-      justify-content: space-between;
-      background: #262626;
-      padding: 15px 16px;
-      margin-bottom: 10px;
-      border-radius: 6px;
-      font-weight: 600;
-    }
-
-    .city-tagline {
-      margin-top: 30px;
-      font-size: 1rem;
-      text-align: center;
-    }
-
-    .city-tagline h2 {
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: #ffffff;
-      margin-bottom: 8px;
-    }
-
-    .city-tagline p {
-      color: #ccc;
-    }
-
-    .city-tagline a {
-      color: #66ccff;
-      text-decoration: underline;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Crime Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
+        <h1 class="text-3xl font-bold mb-6 text-center">Global Crime Data Overview</h1>
 
-  <div class="top-banner">
-  <div class="overlay-text">
-    <h1 class="banner-title">Crime Around the World</h1>
-   </div>
-   </div> 
+        <!-- Data Status/Notification Area -->
+        <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-6" role="alert">
+            <p class="font-bold">Data Status:</p>
+            <p>{{ update_message }}</p>
+            <p class="text-sm">Last data loaded into app memory: {{ last_update_time }}</p>
+            <p class="text-sm">Note: Data update check relies on the source server's 'Last-Modified' header.</p>
+        </div>
 
-  <div class="main-container">
-    <!-- ✅ Left Section -->
-    <div class="main-left">
-      <h1 class="page-title">Crime In Your Country </h1>
-      <p class="subheading">Opening up global crime data</p>
-
-      <p class="description">
-        <span class="highlight">Crime Around the World</span> gives you an easy way to explore different types of crime across nations from <strong>2019 to 2024</strong>. Understand trends, compare countries, and uncover insights from global reports.
-      </p>
-
-      <div class="city-tagline">
-        <h2>Know your country. Track different kinds of crimes.</h2>
-        <p>
-          Explore trends across the globe. 
-          <a href="{{ url_for('crime_map') }}"> 🗺 View the map</a> 
-        </p>
-      </div>
-
-      <div class="form-box">
-        <form onsubmit="handleCountrySubmit(event)">
-          <label for="country" class="visually-hidden">Choose a country</label>
-          <select id="country" required>
-            <option value="">Select a country</option>
+        <h2 class="text-2xl font-semibold mb-4">Countries</h2>
+        <ul class="list-disc list-inside mb-6">
             {% for country in countries %}
-              <option value="{{ country }}">{{ country }}</option>
+                <li><a href="{{ url_for('country_stats', country=country) }}" class="text-blue-600 hover:underline">{{ country }}</a></li>
             {% endfor %}
-          </select>
-          <div class="button-row">
-            <button type="submit">📊 Show Stats</button>
-            <a href="{{ url_for('stats') }}" class="secondary-btn">🌍 View Global Stats</a>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- ✅ Right Section -->
-    <div class="main-right">
-      <div class="top10-section">
-        <h1   class="page-title">Top 20 Countries by Total Crime (2019–2024) </h2>
-        <ul class="leaderboard">
-          {% for item in top_10 %}
-            <li>
-              <span>{{ item['Country'] }}</span>
-              <span class="crime-count">{{ "{:,}".format(item['total_crime']|int) }} crimes</span>
-            </li>
-          {% endfor %}
         </ul>
-      </div>
+
+        <h2 class="text-2xl font-semibold mb-4">Top 20 Countries by Total Crime (2019-2024)</h2>
+        <table class="min-w-full bg-white border border-gray-200">
+            <thead>
+                <tr>
+                    <th class="py-2 px-4 border-b">Rank</th>
+                    <th class="py-2 px-4 border-b text-left">Country</th>
+                    <th class="py-2 px-4 border-b text-right">Total Crime</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for country in top_10 %}
+                <tr>
+                    <td class="py-2 px-4 border-b text-center">{{ loop.index }}</td>
+                    <td class="py-2 px-4 border-b">{{ country.Country }}</td>
+                    <td class="py-2 px-4 border-b text-right">{{ "%.0f" | format(country.total_crime) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="mt-8 text-center">
+            <a href="{{ url_for('stats') }}" class="inline-block bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-4">View Global Stats</a>
+            <a href="{{ url_for('map') }}" class="inline-block bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">View Crime Map</a>
+            <!-- Button to force a data update -->
+            <a href="{{ url_for('force_data_update') }}" class="inline-block bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-4">Force Data Update</a>
+        </div>
     </div>
-  </div>
-
-  <script>
-    function handleCountrySubmit(event) {
-      event.preventDefault();
-      const country = document.getElementById('country').value;
-      if (country) {
-        window.location.href = '/country/' + encodeURIComponent(country);
-      }
-    }
-  </script>
-
 </body>
 </html>
