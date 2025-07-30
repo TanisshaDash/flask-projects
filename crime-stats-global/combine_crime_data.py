@@ -46,6 +46,5 @@ def generate_merged_crime_data():
     merged_df.to_csv("static/data/global_crime_data.csv", index=False)
     print("✅ Merged data saved to static/data/global_crime_data.csv")
 
-
 if __name__ == "__main__":
     generate_merged_crime_data()
