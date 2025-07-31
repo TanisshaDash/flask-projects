@@ -1,6 +1,6 @@
-from flask import Flask, render_template, request
-import pandas as pd
-import json
+from flask import Flask, render_template, request,  redirect, url_for       
+import pandas as pd , json 
+
 
 app = Flask(__name__)
 
@@ -18,8 +18,17 @@ DATA_PATH = 'static/data/cleaned_global_crime_data.csv'
 def index():
     df = pd.read_csv(DATA_PATH)
     df = df[df['Year'].between(2019, 2024)]
+
     countries = sorted(df['Country'].dropna().unique())
-    return render_template('index.html', countries=countries)
+
+    # Add top 10 by total crime count (summing all DISPLAY_LABEL columns)
+    df['total_crime'] = df[list(DISPLAY_LABELS.keys())].sum(axis=1)
+    country_totals = df.groupby('Country')['total_crime'].sum().sort_values(ascending=False).head(10).reset_index()
+
+    top_10 = country_totals.to_dict(orient='records')
+
+    return render_template('index.html', countries=countries, top_10=top_10)
+
 
 @app.route('/stats')
 def stats():
@@ -33,16 +42,30 @@ def stats():
             grouped = df.groupby('Year')[internal].sum().reset_index()
             years = grouped['Year'].tolist()
             values = grouped[internal].tolist()
-
-            # Make sure the right label is assigned to correct column data
             if any(v > 0 for v in values):
                 chart_data[label] = {
-                    "years": years,
-                    "values": values
+                    'years': years,
+                    'values': values
                 }
 
-    print("📊 Charts JSON Preview:\n", json.dumps(chart_data, indent=2))
-    return render_template('stats.html', charts=chart_data, charts_json=json.dumps(chart_data))
+    return render_template('stats.html', charts=chart_data, charts_json=chart_data, country=None)
+
+
+@app.route('/map')
+def crime_map():
+    df = pd.read_csv(DATA_PATH)
+    df = df[df['Year'] == 2023]
+    country_values = df.groupby("Country")["intentional_homicide"].sum().to_dict()
+    return render_template("map.html", crime_data=json.dumps(country_values))
+
+
+
+
+
+@app.route('/country')
+def country_redirect():
+    country = request.args.get("country")
+    return redirect(url_for('country_stats', country=country))
 
 
 @app.route('/country/<country>')
@@ -63,9 +86,8 @@ def country_stats(country):
                 }
 
     print("📊 Charts JSON Preview:\n", json.dumps(chart_data, indent=2))
-    return render_template('stats.html', charts=chart_data, charts_json=chart_data)
+    return render_template('stats.html', charts=chart_data, charts_json=chart_data, country=country )
 
 
 if __name__ == '__main__':
     app.run(debug=True)
-
