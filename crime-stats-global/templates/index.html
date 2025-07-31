@@ -50,14 +50,13 @@
   </div>
 
   <script>
-    function downloadChart(index, name) {
-  const chartCanvas = document.getElementById('chart_' + index);
-  const url = chartCanvas.toDataURL('image/png');
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = `${name}.png`;  // ✅ Fixed line
-  link.click();
-}
+    function handleCountrySubmit(event) {
+      event.preventDefault();
+      const country = document.getElementById('country').value;
+      if (country) {
+        window.location.href = '/country/' + encodeURIComponent(country);
+      }
+    }
   </script>
 
 </body>

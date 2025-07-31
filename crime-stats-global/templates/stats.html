@@ -147,14 +147,14 @@
       });
     });
 
-    function downloadChart(index, name) {
-      const chartCanvas = document.getElementById('chart_' + index);
-      const url = chartCanvas.toDataURL('image/png');
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = ${name}.png;
-      link.click();
-    }
+function downloadChart(index, name) {
+  const chartCanvas = document.getElementById('chart_' + index);
+  const url = chartCanvas.toDataURL('image/png');
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${name}.png`;  // ✅ backticks used here
+  link.click();
+}
   </script>
 </body>
 </html>
