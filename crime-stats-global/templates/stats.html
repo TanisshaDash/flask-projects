@@ -77,11 +77,10 @@
 
   <div id="charts-container">
     {% for crime_type, data in charts.items() %}
-      <div class="chart-section" data-chart-index="{{ loop.index }}">
+      <div class="chart-section" data-chart-index="{{ crime_type }}">
         <h2>{{ crime_type }}</h2>
-<canvas id="chart_{{ loop.index }}" ...></canvas>
-<button onclick="downloadChart('{{ loop.index }}', `{{ crime_type | replace(' ', '_') }}`)">⬇ Download Chart</button>
-
+        <canvas id="chart_{{ loop.index }}" width="800" height="400"></canvas>
+        <button onclick="downloadChart('{{ loop.index }}', '{{ crime_type }}')">⬇ Download Chart</button>
       </div>
     {% endfor %}
   </div>
@@ -148,16 +147,14 @@
       });
     });
 
-function downloadChart(index, name) {
-  const chartCanvas = document.getElementById('chart_' + index);
-  const url = chartCanvas.toDataURL('image/png');
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = `${name}.png`;  // ✅ backticks used here
-  link.click();
-}
-
-
+    function downloadChart(index, name) {
+      const chartCanvas = document.getElementById('chart_' + index);
+      const url = chartCanvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${name}.png`;
+      link.click();
+    }
   </script>
 </body>
 </html>
