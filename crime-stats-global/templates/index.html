@@ -2,49 +2,50 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Global Crime Statistics Dashboard</title>
+  <title>Global Crime Dashboard</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <header>
-    <h1>Global Crime Statistics Dashboard</h1>
-  </header>
+  <div class="main-wrapper">
+    <h1 class="page-title">Crime Around the World</h1>
+    <p class="subheading">Opening up global crime data</p>
 
-  <div class="section">
-    <div class="intro">
-      <p>
-        Welcome to the Global Crime Statistics Dashboard, a data visualization tool covering global crime trends from
-        <strong>2019 to 2024</strong>. This platform enables you to explore and analyze crime statistics across different countries and
-        categories, including <em>intentional homicide</em>, <em>corruption and economic crimes</em>, <em>firearms trafficking</em>, and more.
-        Whether you're a policymaker, researcher, or a curious citizen, this dashboard offers insights to help you understand and interpret the patterns of criminal activity worldwide.
-      </p>
-    </div>
+    <p class="description">
+      <span class="highlight">Crime Around the World</span> is a dashboard that visualizes crime trends across countries from <strong>2019 to 2024</strong>. It helps you explore different types of crimes, such as <em>intentional homicide</em>, <em>corruption</em>, and <em>firearms trafficking</em> — without having to dig through complex data files or PDFs.
+    </p>
 
-    <div class="top-countries">
-      <h2>🌍 Top 10 Countries with the Highest Total Crime (2019–2024)</h2>
-      <ol>
-        {% for item in top_10 %}
-          <li><strong>{{ item['Country'] }}</strong>: {{ "{:,.0f}".format(item['total_crime']) }} total reported cases</li>
-        {% endfor %}
-      </ol>
-    </div>
+    <p class="description emphasis">
+      Understand your region. Compare global crime levels.
+    </p>
+    <p class="description small-text">
+      Choose a country to begin, or browse global statistics. You can also <a href="/map">view the map</a> for 2023 data.
+    </p>
 
-    <div class="stats-section">
+    <div class="form-box">
       <form onsubmit="handleCountrySubmit(event)">
-        <label for="country"><strong>View Statistics by Country</strong></label><br>
         <select id="country" required>
-          <option value="">Select Country</option>
+          <option value="">Select a country</option>
           {% for country in countries %}
             <option value="{{ country }}">{{ country }}</option>
           {% endfor %}
         </select>
-        <button type="submit">View Country Stats</button>
+        <button type="submit">Show Stats</button>
       </form>
 
       <form action="{{ url_for('stats') }}" method="get">
-        <button type="submit">📊 View Global Statistics</button>
+        <button type="submit" class="secondary-btn">🌍 View Global Stats</button>
       </form>
+    </div>
+
+    <div class="top10-section">
+      <h2>Top 10 Countries by Total Crime (2019–2024)</h2>
+      <ol>
+        {% for item in top_10 %}
+          <li><strong>{{ item['Country'] }}</strong>: {{ "{:,.0f}".format(item['total_crime']) }} crimes</li>
+        {% endfor %}
+      </ol>
     </div>
   </div>
 
