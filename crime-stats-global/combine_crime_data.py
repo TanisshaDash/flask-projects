@@ -29,11 +29,11 @@ def clean_csv(filepath, new_value_column_name):
     return df
 
 def generate_merged_crime_data():
-    corruption_df = clean_csv("data_cts_corruption_and_economic_crime 6.csv", "Corruption_Economic_Crime")
-    homicide_df = clean_csv("data_cts_intentional_homicide.csv", "Intentional_Homicide")
-    firearms_df = clean_csv("data_iafq_firearms_trafficking.csv", "Firearms_Trafficking")
-    justice_df = clean_csv("data_cts_access_and_functioning_of_justice 1.csv", "Access_Justice")
-    sexualcrime_df = clean_csv("data_cts_violent_and_sexual_crime.csv", "Violent_Sexual_Crime")
+    corruption_df = clean_csv("data_cts_corruption_and_economic_crime 6.csv", "corruption_and_economic_crime")
+    homicide_df = clean_csv("data_cts_intentional_homicide.csv", "intentional_homicide")
+    firearms_df = clean_csv("data_iafq_firearms_trafficking.csv", "firearms_trafficking")
+    justice_df = clean_csv("data_cts_access_and_functioning_of_justice 1.csv", "access_and_functioning_of_justice")
+    sexualcrime_df = clean_csv("data_cts_violent_and_sexual_crime.csv", "violent_and_sexual_crime")
 
     merged_df = corruption_df \
         .merge(homicide_df, on=["Country", "Year"], how="outer") \
@@ -46,5 +46,6 @@ def generate_merged_crime_data():
     merged_df.to_csv("static/data/global_crime_data.csv", index=False)
     print("✅ Merged data saved to static/data/global_crime_data.csv")
 
+# Make sure to run this script again after making the change to generate the new CSV.
 if __name__ == "__main__":
     generate_merged_crime_data()
