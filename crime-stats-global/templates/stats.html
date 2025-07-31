@@ -79,8 +79,9 @@
     {% for crime_type, data in charts.items() %}
       <div class="chart-section" data-chart-index="{{ loop.index }}">
         <h2>{{ crime_type }}</h2>
-        <canvas id="chart_{{ loop.index }}" width="800" height="400"></canvas>
-        <button onclick="downloadChart('{{ loop.index }}', '{{ crime_type }}')">⬇ Download Chart</button>
+<canvas id="chart_{{ loop.index }}" ...></canvas>
+<button onclick="downloadChart('{{ loop.index }}', `{{ crime_type | replace(' ', '_') }}`)">⬇ Download Chart</button>
+
       </div>
     {% endfor %}
   </div>
@@ -155,6 +156,8 @@ function downloadChart(index, name) {
   link.download = `${name}.png`;  // ✅ backticks used here
   link.click();
 }
+
+
   </script>
 </body>
 </html>
