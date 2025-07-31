@@ -5,10 +5,141 @@
   <title>Global Crime Dashboard</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Source Sans Pro', sans-serif;
+      background: #0d0d0d;
+      color: #f1f1f1;
+      display: flex;
+      flex-direction: row;
+      min-height: 100vh;
+    }
+
+    .main-left {
+      flex: 1;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    .main-right {
+      width: 50vw;
+      max-width: 700px;
+      background: #161616;
+      padding: 40px;
+      overflow-y: auto;
+    }
+
+    h1.page-title {
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: #3399ff;
+      margin-bottom: 10px;
+    }
+
+    .subheading {
+      font-size: 1.3rem;
+      color: #ccc;
+    }
+
+    .description {
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin-top: 15px;
+    }
+
+    .highlight {
+      color: #66ccff;
+      font-weight: bold;
+    }
+
+    .form-box select {
+      padding: 12px;
+      font-size: 1rem;
+      background: #222;
+      color: #f1f1f1;
+      border: 1px solid #444;
+      border-radius: 6px;
+      width: 100%;
+    }
+
+    .button-row {
+      margin-top: 15px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .button-row button,
+    .button-row a {
+      background: #3399ff;
+      color: white;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      width: fit-content;
+    }
+
+    .secondary-btn {
+      background: #444;
+    }
+
+    .top10-section {
+      margin-top: 40px;
+    }
+
+    .top10-section h2 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+
+    .leaderboard {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .leaderboard li {
+      display: flex;
+      justify-content: space-between;
+      background: #262626;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .city-tagline {
+      margin-top: 30px;
+      font-size: 1.1rem;
+      max-width: 600px;
+    }
+
+    .city-tagline h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .city-tagline p {
+      color: #ccc;
+    }
+
+    .city-tagline a {
+      color: #66ccff;
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
 
-  <div class="main-wrapper">
+  <div class="main-left">
     <h1 class="page-title">Crime Around the World</h1>
     <p class="subheading">Opening up global crime data</p>
 
@@ -16,9 +147,19 @@
       <span class="highlight">Crime Around the World</span> gives you an easy way to explore different types of crime across nations from <strong>2019 to 2024</strong>. Understand trends, compare countries, and uncover insights from global reports.
     </p>
 
-    <p class="description emphasis">Begin your exploration below 👇</p>
+    <!-- 🔽 New tagline section -->
+    <div class="city-tagline">
+      <h2>Know your country. Track different kinds of crimes.</h2>
+      <p>
+        Explore trends across the globe. Choose from 
+        <a href="{{ url_for('stats') }}">crime categories</a> or 
+        <a href="{{ url_for('crime_map') }}">view the map</a> for regional insights.
+      </p>
+    </div>
 
-    <div class="form-box animate-fade">
+    <p class="description">Begin your exploration below 👇</p>
+
+    <div class="form-box">
       <form onsubmit="handleCountrySubmit(event)">
         <label for="country" class="visually-hidden">Choose a country</label>
         <select id="country" required>
@@ -33,19 +174,20 @@
         </div>
       </form>
     </div>
+  </div>
 
+  <div class="main-right">
     <div class="top10-section">
-  <h2>Top 10 Countries by Total Crime (2019–2024)</h2>
-  <ul class="leaderboard">
-    {% for item in top_10 %}
-      <li style="--i: {{ loop.index }}">
-        <span class="flag-icon">{{ item['Country'] }}</span>
-        <span class="crime-count">{{ "{:,}".format(item['total_crime']) }} crimes</span>
-      </li>
-    {% endfor %}
-  </ul>
-</div>
-
+      <h2>Top 20 Countries by Total Crime (2019–2024)</h2>
+      <ul class="leaderboard">
+        {% for item in top_10 %}
+          <li>
+            <span>{{ item['Country'] }}</span>
+            <span class="crime-count">{{ "{:,}".format(item['total_crime']|int) }} crimes</span>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
   </div>
 
   <script>
@@ -57,7 +199,5 @@
       }
     }
   </script>
-
 </body>
-
 </html>
