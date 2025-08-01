@@ -67,7 +67,7 @@
     <select id="filterSelect">
       <option value="all">Show All</option>
       {% for crime_type in charts.keys() %}
-        <option value="{{ loop.index }}">{{ crime_type }}</option>
+        <option value="{{ crime_type }}">{{ crime_type }}</option>
       {% endfor %}
     </select>
 
@@ -79,8 +79,9 @@
     {% for crime_type, data in charts.items() %}
       <div class="chart-section" data-chart-index="{{ crime_type }}">
         <h2>{{ crime_type }}</h2>
-        <canvas id="chart_{{ loop.index }}" width="800" height="400"></canvas>
-        <button onclick="downloadChart('{{ loop.index }}', '{{ crime_type }}')">⬇ Download Chart</button>
+        <canvas id="chart_{{ crime_type | replace(' ', '_') }}" width="800" height="400"></canvas>
+        <button onclick="downloadChart('{{ crime_type | replace(' ,' , '_') }}', '{{ crime_type }}')">
+        ⬇ Download Chart</button>
       </div>
     {% endfor %}
   </div>
@@ -93,8 +94,10 @@
     const chartsData = JSON.parse(document.getElementById('charts-data').textContent);
     const chartObjects = [];
 
-    Object.entries(chartsData).forEach(([crimeType, crimeData], index) => {
-      const ctx = document.getElementById('chart_' + (index + 1)).getContext('2d');
+    Object.entries(chartsData).forEach(([crimeType, crimeData]) => {
+      const chartId = crimeType.replace(/ /g, "_");
+      const ctx = document.getElementById('chart_' + chartId).getContext('2d');
+
       const chart = new Chart(ctx, {
         type: 'line',
         data: {
@@ -131,6 +134,7 @@
           }
         }
       });
+
       chartObjects.push(chart);
     });
 
@@ -147,8 +151,8 @@
       });
     });
 
-    function downloadChart(index, name) {
-      const chartCanvas = document.getElementById('chart_' + index);
+    function downloadChart(chartId, name) {
+      const chartCanvas = document.getElementById('chart_' + chartId);
       const url = chartCanvas.toDataURL('image/png');
       const link = document.createElement('a');
       link.href = url;
