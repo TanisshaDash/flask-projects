@@ -1,5 +1,8 @@
 from flask import Flask, render_template, request,  redirect, url_for       
 import pandas as pd , json 
+import requests
+from io import StringIO
+from datetime import datetime
 
 
 app = Flask(__name__)
@@ -13,6 +16,20 @@ DISPLAY_LABELS = {
 }
 
 DATA_PATH = 'static/data/cleaned_global_crime_data.csv'
+
+def fetch_and_clean_csv(url):
+    print(f"🔗 Fetching data from {url}")
+    response = requests.get(url)
+    if response.status_code != 200:
+        raise Exception("Failed to fetch CSV file.")
+
+    csv_data = StringIO(response.text)
+    df = pd.read_csv(csv_data)
+
+    # Clean and filter
+    df.columns = df.columns.str.strip()
+    df = df[df['Year'].between(2019, 2024)]
+    return df
 
 @app.route('/')
 def index():
@@ -32,24 +49,19 @@ def index():
 
 @app.route('/stats')
 def stats():
-    df = pd.read_csv(DATA_PATH)
-    df = df[df['Year'].between(2019, 2024)]
+    url = "https://raw.githubusercontent.com/TanisshaDash/flask-projects/refs/heads/main/crime-stats-global/static/data/cleaned_global_crime_data.csv"
+    df = fetch_and_clean_csv(url)
 
-    chart_data = {}
-
-    for internal, label in DISPLAY_LABELS.items():
-        if internal in df.columns:
-            grouped = df.groupby('Year')[internal].sum().reset_index()
-            years = grouped['Year'].tolist()
-            values = grouped[internal].tolist()
-            if any(v > 0 for v in values):
-                chart_data[label] = {
-                    'years': years,
-                    'values': values
-                }
-
-    return render_template('stats.html', charts=chart_data, charts_json=chart_data, country=None)
-
+    charts = {}
+    for crime_type in df['Crime Type'].unique():
+        subset = df[df['Crime Type'] == crime_type]
+        charts[crime_type] = {
+            'years': list(subset['Year']),
+            'values': list(subset['Value'])
+        }
+    
+    timestamp = datetime.now().strftime("%d %B %Y, %I:%M %p")
+    return render_template("stats.html", charts=charts, charts_json=charts, timestamp=timestamp, country=None)
 
 @app.route('/map')
 def crime_map():
@@ -57,9 +69,6 @@ def crime_map():
     df = df[df['Year'] == 2023]
     country_values = df.groupby("Country")["intentional_homicide"].sum().to_dict()
     return render_template("map.html", crime_data=json.dumps(country_values))
-
-
-
 
 
 @app.route('/country')
@@ -87,7 +96,6 @@ def country_stats(country):
 
     print("📊 Charts JSON Preview:\n", json.dumps(chart_data, indent=2))
     return render_template('stats.html', charts=chart_data, charts_json=chart_data, country=country )
-
 
 if __name__ == '__main__':
     app.run(debug=True)
