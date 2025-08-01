@@ -45,44 +45,45 @@
   <canvas id="homicideChart" width="900" height="400"></canvas>
 
   <script>
-    const data = {{ chart | tojson }};
-    const ctx = document.getElementById('homicideChart').getContext('2d');
+  const data = {{ chart | tojson }};
+  const ctx = document.getElementById('homicideChart').getContext('2d');
 
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: data.years,
-        datasets: [{
-          label: 'Homicide Rate',
-          data: data.values,
-          borderColor: 'red',
-          backgroundColor: 'rgba(255, 99, 132, 0.2)',
-          borderWidth: 2,
-          fill: true
-        }]
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: data.years,
+      datasets: [{
+        label: 'Homicide Rate',
+        data: data.values,
+        borderColor: 'red',
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderWidth: 2,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: true }
       },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { display: true }
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Rate per 100,000'
+          }
         },
-        scales: {
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: 'Rate per 100,000'
-            }
-          },
-          x: {
-            title: {
-              display: true,
-              text: 'Year'
-            }
+        x: {
+          title: {
+            display: true,
+            text: 'Year'
           }
         }
       }
-    });
-  </script>
+    }
+  });
+</script>
+
 </body>
 </html>
