@@ -1,9 +1,9 @@
-from flask import Flask, render_template, request,  redirect, url_for       
-import pandas as pd , json 
+from flask import Flask, render_template, request, redirect, url_for
+import pandas as pd
 import requests
+import json
 from io import StringIO
 from datetime import datetime
-
 
 app = Flask(__name__)
 
@@ -22,11 +22,8 @@ def fetch_and_clean_csv(url):
     response = requests.get(url)
     if response.status_code != 200:
         raise Exception("Failed to fetch CSV file.")
-
     csv_data = StringIO(response.text)
     df = pd.read_csv(csv_data)
-
-    # Clean and filter
     df.columns = df.columns.str.strip()
     df = df[df['Year'].between(2019, 2024)]
     return df
@@ -37,19 +34,15 @@ def index():
     df = df[df['Year'].between(2019, 2024)]
 
     countries = sorted(df['Country'].dropna().unique())
-
-    # Add top 10 by total crime count (summing all DISPLAY_LABEL columns)
     df['total_crime'] = df[list(DISPLAY_LABELS.keys())].sum(axis=1)
     country_totals = df.groupby('Country')['total_crime'].sum().sort_values(ascending=False).head(10).reset_index()
-
     top_10 = country_totals.to_dict(orient='records')
 
     return render_template('index.html', countries=countries, top_10=top_10)
 
-
 @app.route('/stats')
 def stats():
-    url = "https://raw.githubusercontent.com/TanisshaDash/flask-projects/refs/heads/main/crime-stats-global/static/data/cleaned_global_crime_data.csv"
+    url = "https://raw.githubusercontent.com/TanisshaDash/flask-projects/main/crime-stats-global/static/data/cleaned_global_crime_data.csv"
     df = fetch_and_clean_csv(url)
 
     charts = {}
@@ -59,7 +52,7 @@ def stats():
             'years': list(subset['Year']),
             'values': list(subset['Value'])
         }
-    
+
     timestamp = datetime.now().strftime("%d %B %Y, %I:%M %p")
     return render_template("stats.html", charts=charts, charts_json=charts, timestamp=timestamp, country=None)
 
@@ -70,12 +63,10 @@ def crime_map():
     country_values = df.groupby("Country")["intentional_homicide"].sum().to_dict()
     return render_template("map.html", crime_data=json.dumps(country_values))
 
-
 @app.route('/country')
 def country_redirect():
     country = request.args.get("country")
     return redirect(url_for('country_stats', country=country))
-
 
 @app.route('/country/<country>')
 def country_stats(country):
@@ -83,7 +74,6 @@ def country_stats(country):
     df = df[(df['Country'] == country) & (df['Year'].between(2019, 2024))]
 
     chart_data = {}
-
     for internal_col, display_name in DISPLAY_LABELS.items():
         if internal_col in df.columns:
             yearly = df[['Year', internal_col]].dropna().groupby('Year').sum().reset_index()
@@ -94,8 +84,7 @@ def country_stats(country):
                     "values": values
                 }
 
-    print("📊 Charts JSON Preview:\n", json.dumps(chart_data, indent=2))
-    return render_template('stats.html', charts=chart_data, charts_json=chart_data, country=country )
+    return render_template('stats.html', charts=chart_data, charts_json=chart_data, country=country)
 
 if __name__ == '__main__':
     app.run(debug=True)
