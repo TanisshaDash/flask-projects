@@ -28,6 +28,48 @@ def fetch_and_clean_csv(url):
     df = df[df['Year'].between(2019, 2024)]
     return df
 
+def get_live_homicide_data(country_code):
+    url = f"https://api.worldbank.org/v2/country/{country_code}/indicator/VC.IHR.PSRC.P5?format=json&per_page=100"
+    response = requests.get(url)
+    
+    if response.status_code != 200:
+        return {"years": [], "values": []}
+
+    data = response.json()
+    if not data or len(data) < 2:
+        return {"years": [], "values": []}
+
+    records = data[1]
+    years = []
+    values = []
+
+    for entry in records:
+        year = entry.get("date")
+        value = entry.get("value")
+        if year and value is not None:
+            years.append(int(year))
+            values.append(float(value))
+
+    return {"years": years[::-1], "values": values[::-1]}  # Sort oldest to newest
+
+@app.route('/live')
+def live_homicide_dashboard():
+    selected_country = request.args.get('country', 'IN').upper()
+    chart = get_live_homicide_data(selected_country)
+
+    countries = {
+        "IN": "India",
+        "US": "United States",
+        "BR": "Brazil",
+        "ZA": "South Africa",
+        "FR": "France",
+        "JP": "Japan"
+    }
+
+    timestamp = datetime.now().strftime("%d %B %Y, %I:%M %p")
+    return render_template("live_stats.html", chart=chart, countries=countries,
+                           selected_country=selected_country, timestamp=timestamp)
+
 @app.route('/')
 def index():
     df = pd.read_csv(DATA_PATH)

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Live Homicide Data</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background: #f0f2f5;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    select {
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    .timestamp {
+      text-align: center;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌐 Live Homicide Rate (per 100k people)</h1>
+
+  <div style="text-align:center;">
+    <form method="get" action="/live">
+      <label for="country">Select Country:</label>
+      <select name="country" id="country" onchange="this.form.submit()">
+        {% for code, name in countries.items() %}
+          <option value="{{ code }}" {% if code == selected_country %}selected{% endif %}>{{ name }}</option>
+        {% endfor %}
+      </select>
+    </form>
+  </div>
+
+  <p class="timestamp">🕒 Data last fetched: <strong>{{ timestamp }}</strong></p>
+
+  <canvas id="homicideChart" width="900" height="400"></canvas>
+
+  <script>
+    const data = {{ chart | tojson }};
+    const ctx = document.getElementById('homicideChart').getContext('2d');
+
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: data.years,
+        datasets: [{
+          label: 'Homicide Rate',
+          data: data.values,
+          borderColor: 'red',
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderWidth: 2,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: true }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Rate per 100,000'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Year'
+            }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
