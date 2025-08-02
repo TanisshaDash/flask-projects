@@ -53,7 +53,7 @@ def get_live_homicide_data(country_code):
     return {"years": years[::-1], "values": values[::-1]}  # Sort oldest to newest
 
 @app.route('/live')
-def live_homicide_dashboard():
+def live_stats():
     selected_country = request.args.get('country', 'IN').upper()
     chart = get_live_homicide_data(selected_country)
 
@@ -84,8 +84,17 @@ def index():
 
 @app.route('/stats')
 def stats():
-    url = "https://raw.githubusercontent.com/TanisshaDash/flask-projects/main/crime-stats-global/static/data/cleaned_global_crime_data.csv"
-    df = fetch_and_clean_csv(url)
+    df = pd.read_csv(DATA_PATH)
+    df = df[df['Year'].between(2019, 2024)]
+
+    # Convert wide to long if necessary
+    if 'Crime Type' not in df.columns:
+        df = df.melt(
+            id_vars=['Country', 'Year'],
+            value_vars=[col for col in df.columns if col not in ['Country', 'Year']],
+            var_name='Crime Type',
+            value_name='Value'
+        )
 
     charts = {}
     for crime_type in df['Crime Type'].unique():
@@ -97,6 +106,7 @@ def stats():
 
     timestamp = datetime.now().strftime("%d %B %Y, %I:%M %p")
     return render_template("stats.html", charts=charts, charts_json=charts, timestamp=timestamp, country=None)
+
 
 @app.route('/map')
 def crime_map():
