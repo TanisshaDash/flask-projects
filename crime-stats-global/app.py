@@ -102,9 +102,6 @@ def stats():
     return render_template("stats.html", charts=charts, charts_json=charts,
                            timestamp=timestamp, country=None)
 
-
-
-
 @app.route('/map')
 def crime_map():
     df = pd.read_csv(DATA_PATH)
