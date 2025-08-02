@@ -87,25 +87,22 @@ def stats():
     df = pd.read_csv(DATA_PATH)
     df = df[df['Year'].between(2019, 2024)]
 
-    # Convert wide to long if necessary
-    if 'Crime Type' not in df.columns:
-        df = df.melt(
-            id_vars=['Country', 'Year'],
-            value_vars=[col for col in df.columns if col not in ['Country', 'Year']],
-            var_name='Crime Type',
-            value_name='Value'
-        )
-
     charts = {}
-    for crime_type in df['Crime Type'].unique():
-        subset = df[df['Crime Type'] == crime_type]
-        charts[crime_type] = {
-            'years': list(subset['Year']),
-            'values': list(subset['Value'])
-        }
+    for internal_col, display_name in DISPLAY_LABELS.items():
+        if internal_col in df.columns:
+            grouped = df.groupby("Year")[internal_col].sum().reset_index()
+
+            charts[display_name] = {
+                'years': grouped['Year'].tolist(),
+                'values': grouped[internal_col].tolist(),
+                'id': internal_col  # used for canvas/chart ID
+            }
 
     timestamp = datetime.now().strftime("%d %B %Y, %I:%M %p")
-    return render_template("stats.html", charts=charts, charts_json=charts, timestamp=timestamp, country=None)
+    return render_template("stats.html", charts=charts, charts_json=charts,
+                           timestamp=timestamp, country=None)
+
+
 
 
 @app.route('/map')
