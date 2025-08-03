@@ -20,9 +20,17 @@
       margin-bottom: 20px;
     }
 
-    .timestamp {
+    .timestamp, .disclaimer {
       text-align: center;
       color: #555;
+    }
+
+    .disclaimer {
+      font-size: 0.95rem;
+      margin-top: 15px;
+      max-width: 750px;
+      margin-left: auto;
+      margin-right: auto;
     }
   </style>
 </head>
@@ -41,48 +49,52 @@
   </div>
 
   <p class="timestamp">🕒 Data last fetched: <strong>{{ timestamp }}</strong></p>
+   <p class="disclaimer">
+    📌 <strong>Note:</strong> Intentional Homicide rate is fetched annually from the World Bank API (per 100k people). 
+    Other metrics (like corruption, firearms trafficking, sexual crime) are based on the cleaned dataset (2019–2024) and are not live.
+  </p>
 
   <canvas id="homicideChart" width="900" height="400"></canvas>
 
   <script>
     const data = {{ chart | tojson }};
-  const ctx = document.getElementById('homicideChart').getContext('2d');
+    const ctx = document.getElementById('homicideChart').getContext('2d');
 
-  new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: data.years,
-      datasets: [{
-        label: 'Homicide Rate',
-        data: data.values,
-        borderColor: 'red',
-        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-        borderWidth: 2,
-        fill: true
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: true }
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: data.years,
+        datasets: [{
+          label: 'Homicide Rate',
+          data: data.values,
+          borderColor: 'red',
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderWidth: 2,
+          fill: true
+        }]
       },
-      scales: {
-        y: {
-          beginAtZero: true,
-          title: {
-            display: true,
-            text: 'Rate per 100,000'
-          }
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: true }
         },
-        x: {
-          title: {
-            display: true,
-            text: 'Year'
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Rate per 100,000'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Year'
+            }
           }
         }
       }
-    }
-  });
-</script>
+    });
+  </script>
 </body>
 </html>

@@ -28,10 +28,10 @@ def fetch_and_clean_csv(url):
     df = df[df['Year'].between(2019, 2024)]
     return df
 
-def get_live_homicide_data(country_code):
+def get_live_homicide(country_code):
     url = f"https://api.worldbank.org/v2/country/{country_code}/indicator/VC.IHR.PSRC.P5?format=json&per_page=100"
     response = requests.get(url)
-    
+
     if response.status_code != 200:
         return {"years": [], "values": []}
 
@@ -40,22 +40,23 @@ def get_live_homicide_data(country_code):
         return {"years": [], "values": []}
 
     records = data[1]
-    years = []
-    values = []
-
+    years, values = [], []
     for entry in records:
         year = entry.get("date")
         value = entry.get("value")
         if year and value is not None:
-            years.append(int(year))
-            values.append(float(value))
+            year_int = int(year)
+            if 2000 <= year_int <= 2024:
+                years.append(year_int)
+                values.append(float(value))
 
-    return {"years": years[::-1], "values": values[::-1]}  # Sort oldest to newest
+    return {"years": years[::-1], "values": values[::-1]}  # Oldest to newest
+
 
 @app.route('/live')
 def live_stats():
     selected_country = request.args.get('country', 'IN').upper()
-    chart = get_live_homicide_data(selected_country)
+    chart = get_live_homicide(selected_country)
 
     countries = {
         "IN": "India",
