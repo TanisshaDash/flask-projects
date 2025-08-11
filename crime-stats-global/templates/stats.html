@@ -9,32 +9,36 @@
       font-family: 'Segoe UI', sans-serif;
       margin: 0;
       padding: 30px;
-      background: #f8f9fa;
+      background: #121212;
+      color: #e0e0e0;
     }
 
     header {
-      background: #343a40;
+      background: #1e1e1e;
       color: white;
       padding: 20px;
       text-align: center;
+      border-bottom: 1px solid #333;
     }
 
     .chart-section {
       max-width: 900px;
       margin: auto;
       padding: 20px;
-      background: white;
+      background: #1f1f1f;
       border-radius: 10px;
       margin-bottom: 30px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      box-shadow: 0 0 10px rgba(0,0,0,0.6);
     }
 
     select, button {
       margin: 10px;
       padding: 10px;
       border-radius: 5px;
-      border: 1px solid #ccc;
+      border: 1px solid #444;
       font-size: 16px;
+      background: #2a2a2a;
+      color: white;
     }
 
     button {
@@ -61,7 +65,6 @@
   <header>
     <h1>{{ country if country else 'Global Crime Statistics (2019–2024)' }}</h1>
   </header>
-
 
   <div class="filter-container">
     <label for="filterSelect"><strong>Filter by Crime Type:</strong></label>
@@ -116,21 +119,25 @@
         options: {
           responsive: true,
           plugins: {
-            legend: { display: true }
+            legend: { labels: { color: '#e0e0e0' } }
           },
           scales: {
             y: {
               beginAtZero: true,
               title: {
                 display: true,
-                text: 'Crime Count'
-              }
+                text: 'Crime Count',
+                color: '#e0e0e0'
+              },
+              ticks: { color: '#e0e0e0' }
             },
             x: {
               title: {
                 display: true,
-                text: 'Year'
-              }
+                text: 'Year',
+                color: '#e0e0e0'
+              },
+              ticks: { color: '#e0e0e0' }
             }
           }
         }
