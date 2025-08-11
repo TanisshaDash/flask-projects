@@ -72,7 +72,6 @@
       flex-wrap: wrap;
     }
 
-    /* Button styling */
     .button-row button,
     .button-row a {
       background: #3399ff;
@@ -86,9 +85,8 @@
       width: fit-content;
     }
 
-    /* Green button specifically */
-    .button-row a.green-btn {
-      background: #28a745;
+    .secondary-btn {
+      background: #3399ff; /* Blue secondary buttons */
     }
 
     .top10-section {
@@ -116,10 +114,15 @@
       font-weight: 600;
     }
 
-    /* Smaller Know Your Country heading */
+    .city-tagline {
+      margin-top: 30px;
+      font-size: 1.1rem;
+      max-width: 600px;
+    }
+
     .city-tagline h2 {
       font-size: 1.5rem;
-      font-weight: 600;
+      font-weight: 700;
       color: #ffffff;
       margin-bottom: 8px;
     }
@@ -137,6 +140,14 @@
 <body>
 
   <div class="main-left">
+
+    <!-- World Map Image Section -->
+    <div class="world-map-section" style="text-align: center; margin-bottom: 30px;">
+      <img src="{{ url_for('static', filename='images/world_map.jpg') }}" 
+           alt="World Map" 
+           style="max-width: 100%; height: auto; border-radius: 8px;">
+    </div>
+
     <h1 class="page-title">Crime Around the World</h1>
     <p class="subheading">Opening up global crime data</p>
 
@@ -145,7 +156,7 @@
     </p>
 
     <div class="city-tagline">
-      <h2>Know your country. Track different kinds of crimes.</h2>
+      <h2 style="font-size: 1.3rem;">Know your country. Track different kinds of crimes.</h2>
       <p>
         Explore trends across the globe. Choose from 
         <a href="{{ url_for('stats') }}">crime categories</a> or 
@@ -166,8 +177,8 @@
         </select>
         <div class="button-row">
           <button type="submit">📊 Show Stats</button>
-          <a href="{{ url_for('stats') }}">🌍 View Global Stats</a>
-          <a href="{{ url_for('live_stats') }}" class="green-btn">🛱️ View Live Homicide Trends</a>
+          <a href="{{ url_for('stats') }}" class="secondary-btn">🌍 View Global Stats</a>
+          <a href="{{ url_for('live_stats') }}" class="secondary-btn" style="background:#28a745;">📡 View Live Homicide Trends</a>
         </div>
       </form>
     </div>
