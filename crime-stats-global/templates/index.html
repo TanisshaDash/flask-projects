@@ -72,6 +72,7 @@
       flex-wrap: wrap;
     }
 
+    /* Button styling */
     .button-row button,
     .button-row a {
       background: #3399ff;
@@ -85,8 +86,9 @@
       width: fit-content;
     }
 
-    .secondary-btn {
-      background: #444;
+    /* Green button specifically */
+    .button-row a.green-btn {
+      background: #28a745;
     }
 
     .top10-section {
@@ -114,15 +116,10 @@
       font-weight: 600;
     }
 
-    .city-tagline {
-      margin-top: 30px;
-      font-size: 1.1rem;
-      max-width: 600px;
-    }
-
+    /* Smaller Know Your Country heading */
     .city-tagline h2 {
       font-size: 1.5rem;
-      font-weight: 700;
+      font-weight: 600;
       color: #ffffff;
       margin-bottom: 8px;
     }
@@ -169,8 +166,8 @@
         </select>
         <div class="button-row">
           <button type="submit">📊 Show Stats</button>
-          <a href="{{ url_for('stats') }}" class="secondary-btn">🌍 View Global Stats</a>
-          <a href="{{ url_for('live_stats') }}" class="secondary-btn" style="background:#28a745;">🛱️ View Live Homicide Trends</a>
+          <a href="{{ url_for('stats') }}">🌍 View Global Stats</a>
+          <a href="{{ url_for('live_stats') }}" class="green-btn">🛱️ View Live Homicide Trends</a>
         </div>
       </form>
     </div>
