@@ -79,6 +79,10 @@
     <button onclick="window.location='/'">🏠 Back to Home</button>
   </div>
 
+    <p class="disclaimer">
+    📌 <strong>Note:</strong> Data has been accquired from UNDOC Crime Bank 
+  </p>
+
   <div id="charts-container">
     {% for crime_type, data in charts.items() %}
       <div class="chart-section" data-chart-index="{{ crime_type }}">

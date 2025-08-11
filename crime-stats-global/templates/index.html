@@ -9,7 +9,7 @@
     body {
       margin: 0;
       font-family: 'Source Sans Pro', sans-serif;
-      background: #0d0d0d;
+      background: #010d2e;
       color: #f1f1f1;
       display: flex;
       flex-direction: column;
@@ -19,10 +19,10 @@
     /* World Map Header */
     .world-map-header {
       width: 100%;
-      height: 550px; /* Adjust as needed */
+      height: 600px; /* Adjust as needed */
       background: url('{{ url_for("static", filename="images/world_map.jpg") }}') center/cover no-repeat;
     }
-
+    
     /* Content Section */
     .content-row {
       flex: 1;
@@ -41,7 +41,7 @@
     .main-right {
       width: 50vw;
       max-width: 700px;
-      background: #161616;
+      background: #3a0101;
       padding: 40px;
       overflow-y: auto;
     }
@@ -155,6 +155,9 @@
 
   <!-- Full-width World Map Header -->
   <div class="world-map-header"></div>
+  <div class="hero-title">
+  <h1>Global Crime Statistics</h1>
+</div>
 
   <!-- Main Content Row -->
   <div class="content-row">
