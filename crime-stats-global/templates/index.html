@@ -12,8 +12,22 @@
       background: #0d0d0d;
       color: #f1f1f1;
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       min-height: 100vh;
+    }
+
+    /* World Map Header */
+    .world-map-header {
+      width: 100%;
+      height: 550px; /* Adjust as needed */
+      background: url('{{ url_for("static", filename="images/world_map.jpg") }}') center/cover no-repeat;
+    }
+
+    /* Content Section */
+    .content-row {
+      flex: 1;
+      display: flex;
+      flex-direction: row;
     }
 
     .main-left {
@@ -86,7 +100,7 @@
     }
 
     .secondary-btn {
-      background: #3399ff; /* Blue secondary buttons */
+      background: #3399ff;
     }
 
     .top10-section {
@@ -121,7 +135,7 @@
     }
 
     .city-tagline h2 {
-      font-size: 1.5rem;
+      font-size: 1.3rem; /* Reduced size */
       font-weight: 700;
       color: #ffffff;
       margin-bottom: 8px;
@@ -139,62 +153,59 @@
 </head>
 <body>
 
-  <div class="main-left">
+  <!-- Full-width World Map Header -->
+  <div class="world-map-header"></div>
 
-    <!-- World Map Image Section -->
-    <div class="world-map-section" style="text-align: center; margin-bottom: 30px;">
-      <img src="{{ url_for('static', filename='images/world_map.jpg') }}" 
-           alt="World Map" 
-           style="max-width: 100%; height: auto; border-radius: 8px;">
-    </div>
+  <!-- Main Content Row -->
+  <div class="content-row">
+    <div class="main-left">
+      <h1 class="page-title">Crime Around the World</h1>
+      <p class="subheading">Opening up global crime data</p>
 
-    <h1 class="page-title">Crime Around the World</h1>
-    <p class="subheading">Opening up global crime data</p>
-
-    <p class="description">
-      <span class="highlight">Crime Around the World</span> gives you an easy way to explore different types of crime across nations from <strong>2019 to 2024</strong>. Understand trends, compare countries, and uncover insights from global reports.
-    </p>
-
-    <div class="city-tagline">
-      <h2 style="font-size: 1.3rem;">Know your country. Track different kinds of crimes.</h2>
-      <p>
-        Explore trends across the globe. Choose from 
-        <a href="{{ url_for('stats') }}">crime categories</a> or 
-        <a href="{{ url_for('crime_map') }}">view the map</a> for regional insights.
+      <p class="description">
+        <span class="highlight">Crime Around the World</span> gives you an easy way to explore different types of crime across nations from <strong>2019 to 2024</strong>. Understand trends, compare countries, and uncover insights from global reports.
       </p>
+
+      <div class="city-tagline">
+        <h2>Know your country. Track different kinds of crimes.</h2>
+        <p>
+          Explore trends across the globe. Choose from 
+          <a href="{{ url_for('stats') }}">crime categories</a> 
+        </p>
+      </div>
+
+      <p class="description">Begin your exploration below 👇</p>
+
+      <div class="form-box">
+        <form onsubmit="handleCountrySubmit(event)">
+          <label for="country" class="visually-hidden">Choose a country</label>
+          <select id="country" required>
+            <option value="">Select a country</option>
+            {% for country in countries %}
+              <option value="{{ country }}">{{ country }}</option>
+            {% endfor %}
+          </select>
+          <div class="button-row">
+            <button type="submit">📊 Show Stats</button>
+            <a href="{{ url_for('stats') }}" class="secondary-btn">🌍 View Global Stats</a>
+            <a href="{{ url_for('live_stats') }}" class="secondary-btn" style="background:#28a745;">📡 View Live Homicide Trends</a>
+          </div>
+        </form>
+      </div>
     </div>
 
-    <p class="description">Begin your exploration below 👇</p>
-
-    <div class="form-box">
-      <form onsubmit="handleCountrySubmit(event)">
-        <label for="country" class="visually-hidden">Choose a country</label>
-        <select id="country" required>
-          <option value="">Select a country</option>
-          {% for country in countries %}
-            <option value="{{ country }}">{{ country }}</option>
+    <div class="main-right">
+      <div class="top10-section">
+        <h2>Top 20 Countries by Total Crime (2019–2024)</h2>
+        <ul class="leaderboard">
+          {% for item in top_10 %}
+            <li>
+              <span>{{ item['Country'] }}</span>
+              <span class="crime-count">{{ "{:,}".format(item['total_crime']|int) }} crimes</span>
+            </li>
           {% endfor %}
-        </select>
-        <div class="button-row">
-          <button type="submit">📊 Show Stats</button>
-          <a href="{{ url_for('stats') }}" class="secondary-btn">🌍 View Global Stats</a>
-          <a href="{{ url_for('live_stats') }}" class="secondary-btn" style="background:#28a745;">📡 View Live Homicide Trends</a>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <div class="main-right">
-    <div class="top10-section">
-      <h2>Top 20 Countries by Total Crime (2019–2024)</h2>
-      <ul class="leaderboard">
-        {% for item in top_10 %}
-          <li>
-            <span>{{ item['Country'] }}</span>
-            <span class="crime-count">{{ "{:,}".format(item['total_crime']|int) }} crimes</span>
-          </li>
-        {% endfor %}
-      </ul>
+        </ul>
+      </div>
     </div>
   </div>
 
