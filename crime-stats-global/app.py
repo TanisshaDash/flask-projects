@@ -78,7 +78,7 @@ def index():
 
     countries = sorted(df['Country'].dropna().unique())
     df['total_crime'] = df[list(DISPLAY_LABELS.keys())].sum(axis=1)
-    country_totals = df.groupby('Country')['total_crime'].sum().sort_values(ascending=False).head(10).reset_index()
+    country_totals = df.groupby('Country')['total_crime'].sum().sort_values(ascending=False).head(20).reset_index()
     top_10 = country_totals.to_dict(orient='records')
 
     return render_template('index.html', countries=countries, top_10=top_10)
