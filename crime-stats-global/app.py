@@ -82,7 +82,6 @@ def index():
     top_10 = country_totals.to_dict(orient='records')
 
     return render_template('index.html', countries=countries, top_10=top_10)
-
 @app.route('/stats')
 def stats():
     df = pd.read_csv(DATA_PATH)
