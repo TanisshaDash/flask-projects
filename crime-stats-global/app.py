@@ -134,15 +134,23 @@ def country_stats(country):
     df = df[(df['Country'] == country) & (df['Year'].between(2019, 2024))]
 
     chart_data = {}
-    for internal_col, display_name in DISPLAY_LABELS.items():
-        if internal_col in df.columns:
-            yearly = df[['Year', internal_col]].dropna().groupby('Year').sum().reset_index()
-            values = yearly[internal_col].tolist()
-            if any(v > 0 for v in values):
-                chart_data[display_name] = {
-                    "years": yearly['Year'].tolist(),
-                    "values": values
-                }
+    for internal_col in df.columns:
+        if internal_col in ['Country', 'Year']:
+            continue  # skip non-crime columns
+
+        yearly = df[['Year', internal_col]].dropna().groupby('Year').sum().reset_index()
+        values = yearly[internal_col].tolist()
+
+        # Use pretty name if in DISPLAY_LABELS, else make it readable
+        display_name = DISPLAY_LABELS.get(
+            internal_col,
+            internal_col.replace('_', ' ').title()
+        )
+
+        chart_data[display_name] = {
+            "years": yearly['Year'].tolist(),
+            "values": values
+        }
 
     return render_template('stats.html', charts=chart_data, charts_json=chart_data, country=country)
 
