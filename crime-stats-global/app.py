@@ -15,7 +15,7 @@ DISPLAY_LABELS = {
     'access_and_functioning_of_justice': 'Access and Functioning of Justice'
 }
 
-DATA_PATH = 'static/data/cleaned_global_crime_data.csv'
+DATA_PATH = 'crime-stats-global/static/data/cleaned_global_crime_data.csv'
 def fetch_and_clean_csv(url):
     print(f"🔗 Fetching data from {url}")
     response = requests.get(url)
