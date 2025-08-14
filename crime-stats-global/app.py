@@ -4,6 +4,7 @@ import requests
 import json
 from io import StringIO
 from datetime import datetime
+import os
 
 app = Flask(__name__)
 
@@ -15,7 +16,20 @@ DISPLAY_LABELS = {
     'access_and_functioning_of_justice': 'Access and Functioning of Justice'
 }
 
+# Local path for development
 DATA_PATH = 'crime-stats-global/static/data/cleaned_global_crime_data.csv'
+
+# Raw GitHub URL for production (replace with your actual repo URL)
+DATA_URL = 'https://raw.githubusercontent.com/TanisshaDash/flask-projects/refs/heads/main/crime-stats-global/static/data/cleaned_global_crime_data.csv'
+
+def load_data():
+    if os.path.exists(DATA_PATH):
+        return pd.read_csv(DATA_PATH)
+    else:
+        print(f"📡 Fetching CSV from {DATA_URL}")
+        df = pd.read_csv(DATA_URL)
+        return df
+
 def fetch_and_clean_csv(url):
     print(f"🔗 Fetching data from {url}")
     response = requests.get(url)
@@ -51,7 +65,6 @@ def get_live_homicide(country_code):
 
     return {"years": years[::-1], "values": values[::-1]}  # Oldest to newest
 
-
 @app.route('/live')
 def live_stats():
     selected_country = request.args.get('country', 'IN').upper()
@@ -72,7 +85,7 @@ def live_stats():
 
 @app.route('/')
 def index():
-    df = pd.read_csv(DATA_PATH)
+    df = load_data()
     df = df[df['Year'].between(2019, 2024)]
 
     countries = sorted(df['Country'].dropna().unique())
@@ -81,9 +94,10 @@ def index():
     top_10 = country_totals.to_dict(orient='records')
 
     return render_template('index.html', countries=countries, top_10=top_10)
+
 @app.route('/stats')
 def stats():
-    df = pd.read_csv(DATA_PATH)
+    df = load_data()
     df = df[df['Year'].between(2019, 2024)]
 
     charts = {}
@@ -103,7 +117,7 @@ def stats():
 
 @app.route('/map')
 def crime_map():
-    df = pd.read_csv(DATA_PATH)
+    df = load_data()
     df = df[df['Year'] == 2023]
     country_values = df.groupby("Country")["intentional_homicide"].sum().to_dict()
     return render_template("map.html", crime_data=json.dumps(country_values))
@@ -115,7 +129,7 @@ def country_redirect():
 
 @app.route('/country/<country>')
 def country_stats(country):
-    df = pd.read_csv(DATA_PATH)
+    df = load_data()
     df = df[(df['Country'] == country) & (df['Year'].between(2019, 2024))]
 
     chart_data = {}
