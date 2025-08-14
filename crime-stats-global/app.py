@@ -16,7 +16,6 @@ DISPLAY_LABELS = {
 }
 
 DATA_PATH = 'static/data/cleaned_global_crime_data.csv'
-
 def fetch_and_clean_csv(url):
     print(f"🔗 Fetching data from {url}")
     response = requests.get(url)
