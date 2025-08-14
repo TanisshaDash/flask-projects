@@ -130,8 +130,7 @@ def country_redirect():
 
 @app.route('/country/<country>')
 def country_stats(country):
-    country = unquote(country)  # decode %20 into spaces
-    df = pd.read_csv(DATA_PATH)
+    df = load_data()
     df = df[(df['Country'] == country) & (df['Year'].between(2019, 2024))]
 
     chart_data = {}
@@ -145,12 +144,7 @@ def country_stats(country):
                     "values": values
                 }
 
-    return render_template(
-        'stats.html',
-        charts=chart_data,
-        charts_json=chart_data,
-        country=country
-    )
+    return render_template('stats.html', charts=chart_data, charts_json=chart_data, country=country)
 
 if __name__ == '__main__':
     app.run(debug=True)
