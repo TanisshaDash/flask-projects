@@ -1,4 +1,6 @@
-# smol Projects with  Flask / SQL db / Jwt
-guess game
+# smol Projects with  Flask 
+Global Crime Statstics w/ live data
 
-todo list
+Guess the Number Game w/ Flask
+
+Simple Todo list w/ SQl db
