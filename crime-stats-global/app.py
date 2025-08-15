@@ -137,11 +137,12 @@ def country_stats(country):
         if internal_col in df.columns:
             yearly = df[['Year', internal_col]].dropna().groupby('Year').sum().reset_index()
             values = yearly[internal_col].tolist()
-            if any(v > 0 for v in values):
-                chart_data[display_name] = {
-                    "years": yearly['Year'].tolist(),
-                    "values": values
-                }
+            
+            # Directly add all crime categories without skipping
+            chart_data[display_name] = {
+                "years": yearly['Year'].tolist(),
+                "values": values
+            }
 
     return render_template('stats.html', charts=chart_data, charts_json=chart_data, country=country)
 
