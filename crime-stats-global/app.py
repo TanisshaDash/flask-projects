@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 import pandas as pd
 import requests
+from urllib.parse import unquote 
 import json
 from io import StringIO
 from datetime import datetime
@@ -130,21 +131,34 @@ def country_redirect():
 @app.route('/country/<country>')
 def country_stats(country):
     df = load_data()
-    df = df[(df['Country'] == country) & (df['Year'].between(2019, 2024))]
+
+    # Decode country name from URL
+    country_name = unquote(country)
+
+    # Ensure Year is integer
+    df['Year'] = df['Year'].astype(int)
+
+    # Filter for that country and year range
+    df = df[(df['Country'] == country_name) & (df['Year'].between(2019, 2024))]
 
     chart_data = {}
     for internal_col, display_name in DISPLAY_LABELS.items():
         if internal_col in df.columns:
             yearly = df[['Year', internal_col]].dropna().groupby('Year').sum().reset_index()
             values = yearly[internal_col].tolist()
-            
-            # Directly add all crime categories without skipping
+
+            # Add all categories directly
             chart_data[display_name] = {
                 "years": yearly['Year'].tolist(),
                 "values": values
             }
 
-    return render_template('stats.html', charts=chart_data, charts_json=chart_data, country=country)
+    return render_template(
+        'stats.html',
+        charts=chart_data,
+        charts_json=chart_data,
+        country=country_name
+    )
 
 if __name__ == '__main__':
     app.run(debug=True)
