@@ -40,7 +40,6 @@ class HighScore(db.Model):
     username = db.Column(db.String(50), nullable=False)
     score = db.Column(db.Integer, nullable=False)
 
-# --- Routes ---
 # --- Home Route ---
 @app.route("/", methods=["GET"])
 @jwt_required(optional=True)
@@ -49,7 +48,6 @@ def home():
     if username:
         return render_template("index.html", username=username)
     return redirect(url_for('login'))
-
 
 
 # --- Register Route ---
