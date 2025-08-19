@@ -152,7 +152,6 @@ def country_stats(country):
                 "years": yearly['Year'].tolist(),
                 "values": values
             }
-
     return render_template(
         'stats.html',
         charts=chart_data,
