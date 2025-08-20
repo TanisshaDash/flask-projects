@@ -1,7 +1,7 @@
 📊 **Global Crime Statistics (CSV + API Data)**
 -> Flask-based web app that visualizes crime statistics across countries and years.
 
--> Uses a cleaned merged *CSV dataset + World Bank API* for live homicide rates (per 100k), Interactive charts by  country and crime type.
+-> Uses a cleaned merged *CSV dataset + World Bank API* for live homicide rates (per 100k) [Live  Homocide Stats from World Bank Api ](https://data.worldbank.org/indicator/VC.IHR.PSRC.P5?locations=IN), Interactive charts by  country and crime type.
 
 -> Leaderboard-style view for top countries with highest crime counts.
 
