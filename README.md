@@ -7,10 +7,8 @@
 
 🎮 **Guess the Number Game (JWT + SQL)**
 
-Fun number-guessing game built with Flask + JWT authentication.
+-> Fun number-guessing game built with *Flask + JWT authentication*.
 
-User registration & login with JWT-secured cookies.
+-> User registration & login with JWT-secured cookies.Guess a random number within limited attempts.
 
-Guess a random number within limited attempts.
-
-Persistent high-score leaderboard using SQLAlchemy + SQLite.
+-> Persistent high-score leaderboard using  *Flask SQLAlchemy + SQLite*.
