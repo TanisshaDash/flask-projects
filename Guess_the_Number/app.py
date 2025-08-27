@@ -12,7 +12,7 @@ import random
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'supersecretkey'
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql+psycopg2://neondb_owner:npg_M5jxYWs0SXfw@ep-jolly-sunset-a4ihg82n-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require"
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI', '')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # JWT Settings
