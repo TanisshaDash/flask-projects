@@ -12,7 +12,7 @@ import random
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'supersecretkey'
-app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:1613@127.0.0.1/guess_gamedb"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgres://neondb_owner:npg_M5jxYWs0SXfw@ep-jolly-sunset-a4ihg82n-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require"
 
 
 # JWT Settings
