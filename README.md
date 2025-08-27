@@ -5,7 +5,7 @@
 
 -> Leaderboard-style view for top countries with highest crime counts.
 
-🎮 **Guess the Number Game (JWT + SQL)** -> [Guess The Number Game](https://flask-projects-2r96.vercel.app/login)
+🎮 **Guess the Number Game (JWT + SQL)** -> [Guess The Number Game](https://flask-projects-nmbo.vercel.app/login)
 
 -> Fun number-guessing game built with *Flask + JWT authentication*.
 
