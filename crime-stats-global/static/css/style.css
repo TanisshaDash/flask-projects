@@ -197,3 +197,31 @@ button:hover, .secondary-btn:hover {
   text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.9); /* stronger shadow for visibility */
   margin: 0;
 }
+.news-section {
+  background: #1f1f1f;
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 40px;
+}
+
+.news-section h2 {
+  margin-bottom: 15px;
+}
+
+.news-section ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.news-section li {
+  margin-bottom: 10px;
+}
+
+.news-section a {
+  color: #00bfff;
+  text-decoration: none;
+}
+
+.news-section a:hover {
+  text-decoration: underline;
+}

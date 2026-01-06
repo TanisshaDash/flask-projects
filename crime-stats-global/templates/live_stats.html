@@ -44,6 +44,39 @@
       <canvas id="homicideChart"></canvas>
     </div>
   </div>
+  <div class="news-section">
+  <h2>📰 Latest Telangana Crime News</h2>
+  <ul id="newsList"></ul>
+</div>
+
+<script>
+  async function fetchCrimeNews() {
+    try {
+      const res = await fetch('/api/telangana-crime-news');
+      const data = await res.json();
+
+      const newsList = document.getElementById('newsList');
+      newsList.innerHTML = '';
+
+      if(data.articles.length === 0){
+        newsList.innerHTML = '<li>No news available</li>';
+        return;
+      }
+
+      data.articles.forEach(article => {
+        const li = document.createElement('li');
+        li.innerHTML = `<a href="${article.url}" target="_blank">${article.title}</a> <small>(${article.source})</small>`;
+        newsList.appendChild(li);
+      });
+    } catch (err) {
+      console.error('Error fetching news:', err);
+      document.getElementById('newsList').innerHTML = '<li>Error loading news</li>';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', fetchCrimeNews);
+</script>
+
 
   <script id="chart-data" type="application/json">
     {{ chart | tojson | safe }}
@@ -71,7 +104,9 @@
         options: { responsive: true, maintainAspectRatio: false }
       });
     }
+     
 
+    
     function updateChart() {
       const countryCode = document.getElementById('countrySelect').value;
       fetch(`/live?country=${countryCode}`)
