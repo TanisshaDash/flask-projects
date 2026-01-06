@@ -1,152 +1,90 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Live Homicide Data</title>
+  <meta charset="UTF-8">
+  <title>Live Homicide Stats - {{ countries[selected_country] if selected_country in countries else selected_country }}</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 40px;
-      background: #121212;
-      color: #e0e0e0;
-    }
-
-    h1 {
-      text-align: center;
-      color: #ffffff;
-    }
-
-    select {
-      padding: 10px;
-      font-size: 16px;
-      margin-bottom: 20px;
-      background: #1e1e1e;
-      color: #ffffff;
-      border: 1px solid #444;
-      border-radius: 5px;
-    }
-
-    .timestamp, .disclaimer {
-      text-align: center;
-      color: #bbbbbb;
-    }
-
-    .disclaimer {
-      font-size: 0.95rem;
-      margin-top: 15px;
-      max-width: 750px;
-      margin-left: auto;
-      margin-right: auto;
-    }
+    body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 30px; background: #121212; color: #e0e0e0; }
+    header { background: #1e1e1e; color: white; padding: 30px; text-align: center; border-radius: 20px; margin-bottom: 40px; }
+    .stats-container { max-width: 1000px; margin: auto; }
+    select, button { padding: 12px 20px; font-size: 16px; border-radius: 10px; border: 2px solid #444; background: #2a2a2a; color: white; margin-right: 10px; }
+    button { cursor: pointer; background: #007bff; color: white; }
+    .chart-container { height: 500px; margin-top: 30px; }
+    .latest-stat { margin-top: 20px; font-size: 18px; }
   </style>
 </head>
 <body>
-  <h1>🌐 Live Homicide Rate (per 100k people)</h1>
+  <header>
+    <h1>🔴 Live Homicide Rates</h1>
+    <p>Real-time data from World Bank API (2000-2024)</p>
+  </header>
 
-  <div style="text-align:center;">
-    <form method="get" action="/live">
-      <label for="country">Select Country:</label>
-      <select name="country" id="country" onchange="this.form.submit()">
+  <div class="stats-container">
+    <div>
+      <label for="countrySelect"><strong>🌍 Select Country:</strong></label>
+      <select id="countrySelect" onchange="updateChart()">
         {% for code, name in countries.items() %}
           <option value="{{ code }}" {% if code == selected_country %}selected{% endif %}>{{ name }}</option>
         {% endfor %}
       </select>
-    </form>
+      <button onclick="window.location='/stats'">📊 Crime Stats</button>
+      <button onclick="window.location='/'">🏠 Home</button>
+    </div>
+
+    <div class="latest-stat">
+      {% if chart is defined and chart.values %}
+        Latest: {{ chart.values[-1]|default(0)|round(2) }} per 100k ({{ chart.years[-1]|default('N/A') }})
+      {% else %}
+        No data available
+      {% endif %}
+    </div>
+
+    <div class="chart-container">
+      <canvas id="homicideChart"></canvas>
+    </div>
   </div>
 
-  <p class="timestamp">🕒 Data last fetched: <strong>{{ timestamp }}</strong></p>
-   <p class="disclaimer">
-    📌 <strong>Note:</strong> Intentional Homicide rate is fetched annually from the World Bank API (per 100k people). 
-    Other metrics (like corruption, firearms trafficking, sexual crime) are based on the cleaned dataset (2019–2024) and are not live.
-  </p>
-
-  <canvas id="homicideChart" width="900" height="400"></canvas>
-
-  <script>
-    const data = {{ chart | tojson }};
-    const ctx = document.getElementById('homicideChart').getContext('2d');
-
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: data.years,
-        datasets: [{
-          label: 'Homicide Rate',
-          data: data.values,
-          borderColor: 'rgba(255, 99, 132, 1)',
-          backgroundColor: 'rgba(255, 99, 132, 0.2)',
-          borderWidth: 2,
-          fill: true
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { labels: { color: '#e0e0e0' } }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: 'Rate per 100,000',
-              color: '#e0e0e0'
-            },
-            ticks: { color: '#e0e0e0' }
-          },
-          x: {
-            title: {
-              display: true,
-              text: 'Year',
-              color: '#e0e0e0'
-            },
-            ticks: { color: '#e0e0e0' }
-          }
-        }
-      }
-    });
+  <script id="chart-data" type="application/json">
+    {{ chart | tojson | safe }}
   </script>
 
-  <hr style="margin:40px 0; border-color:#333;">
+  <script>
+    const initialChartData = JSON.parse(document.getElementById('chart-data').textContent || '{}');
+    let currentChart;
 
-<h1>🚨 Live Crime News – Hyderabad</h1>
-<p style="text-align:center; color:#bbbbbb;">
-Near real-time crime-related updates from verified news sources.
-</p>
+    function createChart(data) {
+      const ctx = document.getElementById('homicideChart').getContext('2d');
+      if (currentChart) currentChart.destroy();
 
-<div id="news-container">Loading...</div>
+      if (!data.years || !data.values || data.years.length === 0) {
+        ctx.font = '24px Segoe UI';
+        ctx.fillStyle = '#888';
+        ctx.textAlign = 'center';
+        ctx.fillText('No data available for this country', ctx.canvas.width/2, ctx.canvas.height/2);
+        return;
+      }
 
-<script>
-fetch('/api/hyderabad-crime-news')
-  .then(res => res.json())
-  .then(data => {
-    const container = document.getElementById('news-container');
-    container.innerHTML = "";
-
-    if (!data.articles || data.articles.length === 0) {
-      container.innerHTML = "<p>No recent crime news found.</p>";
-      return;
+      currentChart = new Chart(ctx, {
+        type: 'line',
+        data: { labels: data.years, datasets: [{ label: 'Homicides per 100k', data: data.values, borderColor: '#ff6b6b', backgroundColor: 'rgba(255,107,107,0.1)', borderWidth: 3, fill: true, tension: 0.4 }] },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
     }
 
-    data.articles.forEach(item => {
-      const div = document.createElement('div');
-      div.style.background = "#1f1f1f";
-      div.style.padding = "15px";
-      div.style.marginBottom = "15px";
-      div.style.borderRadius = "8px";
-      div.style.borderLeft = "4px solid #007bff";
+    function updateChart() {
+      const countryCode = document.getElementById('countrySelect').value;
+      fetch(`/live?country=${countryCode}`)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          const newDataEl = doc.getElementById('chart-data');
+          if (newDataEl) createChart(JSON.parse(newDataEl.textContent));
+        });
+    }
 
-      div.innerHTML = `
-        <h3>${item.title}</h3>
-        <p>${item.description || ""}</p>
-        <small>${item.source} • ${new Date(item.published_at).toLocaleString()}</small><br>
-        <a href="${item.url}" target="_blank" style="color:#4da3ff;">Read full article</a>
-      `;
-      container.appendChild(div);
-    });
-  })
-  .catch(() => {
-    document.getElementById('news-container').innerHTML =
-      "<p>Error loading live data.</p>";
-  });
-</script>
+    document.addEventListener('DOMContentLoaded', () => createChart(initialChartData));
+  </script>
+</body>
+</html>

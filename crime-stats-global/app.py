@@ -5,6 +5,7 @@ import json
 from io import StringIO
 from datetime import datetime
 import os , requests 
+import feedparser
 from combine_crime_data import get_crime_summary
 app = Flask(__name__)
 
@@ -165,56 +166,30 @@ def country_stats(country):
         charts_json=chart_data,
         country=country_name
     )
-@app.route("/api/crime-summary", methods=["GET"])
-def crime_summary():
-    country = request.args.get("country")
+@app.route('/api/telangana-crime-news')
+def telangana_crime_news():
+    RSS_URL = (
+        "https://news.google.com/rss/search?"
+        "q=Telangana+crime+police+Hyderabad&"
+        "hl=en-IN&gl=IN&ceid=IN:en"
+    )
 
-    if not country:
-        return jsonify({"error": "country parameter is required"}), 400
-
-    summary = get_crime_summary(country)
-
-    if not summary:
-        return jsonify({"error": "No data found for this country"}), 404
-
-    return jsonify(summary)
-
-
-NEWS_API_KEY = os.getenv("NEWS_API_KEY")
-if not NEWS_API_KEY:
-    raise RuntimeError("NEWS_API_KEY environment variable not set")
-
-@app.route('/api/hyderabad-crime-news')
-def hyderabad_crime_news():
-    url = "https://newsapi.org/v2/everything"
-
-    params = {
-        "q": "Hyderabad crime OR Hyderabad murder OR Hyderabad theft OR Hyderabad robbery",
-        "language": "en",
-        "sortBy": "publishedAt",
-        "pageSize": 10,
-        "apiKey": NEWS_API_KEY
-    }
-
-    response = requests.get(url, params=params)
-    data = response.json()
-
+    feed = feedparser.parse(RSS_URL)
     articles = []
 
-    if data.get("status") == "ok":
-        for a in data.get("articles", []):
-            articles.append({
-                "title": a["title"],
-                "source": a["source"]["name"],
-                "published_at": a["publishedAt"],
-                "url": a["url"],
-                "description": a["description"]
-            })
+    for entry in feed.entries[:10]:
+        articles.append({
+            "title": entry.title,
+            "url": entry.link,
+            "published_at": entry.published if hasattr(entry, "published") else "",
+            "source": entry.source.title if hasattr(entry, "source") else "Google News"
+        })
 
     return jsonify({
-        "city": "Hyderabad",
+        "region": "Telangana",
         "count": len(articles),
-        "articles": articles
+        "articles": articles,
+        "fetched_at": datetime.now().strftime("%d %B %Y, %I:%M %p")
     })
 
 

@@ -5,60 +5,14 @@
   <title>Crime Stats - {{ country if country else 'Global' }}</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 30px;
-      background: #121212;
-      color: #e0e0e0;
-    }
-
-    header {
-      background: #1e1e1e;
-      color: white;
-      padding: 20px;
-      text-align: center;
-      border-bottom: 1px solid #333;
-    }
-
-    .chart-section {
-      max-width: 900px;
-      margin: auto;
-      padding: 20px;
-      background: #1f1f1f;
-      border-radius: 10px;
-      margin-bottom: 30px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.6);
-    }
-
-    select, button {
-      margin: 10px;
-      padding: 10px;
-      border-radius: 5px;
-      border: 1px solid #444;
-      font-size: 16px;
-      background: #2a2a2a;
-      color: white;
-    }
-
-    button {
-      background-color: #007bff;
-      color: white;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #0056b3;
-    }
-
-    canvas {
-      max-width: 100%;
-    }
-
-    .filter-container {
-      text-align: center;
-      margin-bottom: 30px;
-    }
+    body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 30px; background: #121212; color: #e0e0e0; }
+    header { background: #1e1e1e; color: white; padding: 20px; text-align: center; border-bottom: 1px solid #333; }
+    .chart-section { max-width: 900px; margin: auto; padding: 20px; background: #1f1f1f; border-radius: 10px; margin-bottom: 30px; box-shadow: 0 0 10px rgba(0,0,0,0.6); }
+    select, button { margin: 10px; padding: 10px; border-radius: 5px; border: 1px solid #444; font-size: 16px; background: #2a2a2a; color: white; }
+    button { background-color: #007bff; cursor: pointer; }
+    button:hover { background-color: #0056b3; }
+    .filter-container { text-align: center; margin-bottom: 30px; }
+    .disclaimer { text-align: center; color: #888; font-size: 14px; }
   </style>
 </head>
 <body>
@@ -74,22 +28,18 @@
         <option value="{{ crime_type }}">{{ crime_type }}</option>
       {% endfor %}
     </select>
-
     <button onclick="window.location='/map'">🗺 Map View</button>
     <button onclick="window.location='/'">🏠 Back to Home</button>
   </div>
 
-    <p class="disclaimer">
-    📌 <strong>Note:</strong> Data has been accquired from UNDOC Crime Bank 
-  </p>
+  <p class="disclaimer">📌 <strong>Note:</strong> Data acquired from UNODC Crime Bank</p>
 
   <div id="charts-container">
     {% for crime_type, data in charts.items() %}
       <div class="chart-section" data-chart-index="{{ crime_type }}">
         <h2>{{ crime_type }}</h2>
-        <canvas id="chart_{{ crime_type | replace(' ', '_') }}" width="800" height="400"></canvas>
-        <button onclick="downloadChart('{{ crime_type | replace(' ,' , '_') }}', '{{ crime_type }}')">
-        ⬇ Download Chart</button>
+        <canvas id="chart_{{ crime_type | replace(' ', '_') | replace('&','') }}"></canvas>
+        <button onclick="downloadChart('{{ crime_type | replace(' ', '_') | replace('&','') }}', '{{ crime_type }}')">⬇ Download Chart</button>
       </div>
     {% endfor %}
   </div>
@@ -99,20 +49,21 @@
   </script>
 
   <script>
-    const chartsData = JSON.parse(document.getElementById('charts-data').textContent);
+    const chartsData = JSON.parse(document.getElementById('charts-data').textContent || '{}');
     const chartObjects = [];
 
     Object.entries(chartsData).forEach(([crimeType, crimeData]) => {
-      const chartId = crimeType.replace(/ /g, "_");
-      const ctx = document.getElementById('chart_' + chartId).getContext('2d');
-
+      const chartId = crimeType.replace(/ /g, '_').replace(/&/g, '');
+      const canvas = document.getElementById('chart_' + chartId);
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
       const chart = new Chart(ctx, {
         type: 'line',
         data: {
-          labels: crimeData.years,
+          labels: crimeData.years || [],
           datasets: [{
             label: crimeType,
-            data: crimeData.values,
+            data: crimeData.values || [],
             backgroundColor: 'rgba(54, 162, 235, 0.3)',
             borderColor: 'rgba(54, 162, 235, 1)',
             borderWidth: 2,
@@ -122,54 +73,32 @@
         },
         options: {
           responsive: true,
-          plugins: {
-            legend: { labels: { color: '#e0e0e0' } }
-          },
+          plugins: { legend: { labels: { color: '#e0e0e0' } } },
           scales: {
-            y: {
-              beginAtZero: true,
-              title: {
-                display: true,
-                text: 'Crime Count',
-                color: '#e0e0e0'
-              },
-              ticks: { color: '#e0e0e0' }
-            },
-            x: {
-              title: {
-                display: true,
-                text: 'Year',
-                color: '#e0e0e0'
-              },
-              ticks: { color: '#e0e0e0' }
-            }
+            y: { beginAtZero: true, title: { display: true, text: 'Crime Count', color: '#e0e0e0' }, ticks: { color: '#e0e0e0' } },
+            x: { title: { display: true, text: 'Year', color: '#e0e0e0' }, ticks: { color: '#e0e0e0' } }
           }
         }
       });
-
       chartObjects.push(chart);
     });
 
-    document.getElementById('filterSelect').addEventListener('change', function () {
+    document.getElementById('filterSelect').addEventListener('change', function() {
       const selected = this.value;
-      const sections = document.querySelectorAll('.chart-section');
-
-      sections.forEach(section => {
-        if (selected === 'all' || section.getAttribute('data-chart-index') === selected) {
-          section.style.display = 'block';
-        } else {
-          section.style.display = 'none';
-        }
+      document.querySelectorAll('.chart-section').forEach(section => {
+        section.style.display = (selected === 'all' || section.dataset.chartIndex === selected) ? 'block' : 'none';
       });
     });
 
     function downloadChart(chartId, name) {
-      const chartCanvas = document.getElementById('chart_' + chartId);
-      const url = chartCanvas.toDataURL('image/png');
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${name}.png`;
-      link.click();
+      const canvas = document.getElementById('chart_' + chartId);
+      if (canvas) {
+        const url = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${name}.png`;
+        link.click();
+      }
     }
   </script>
 </body>
