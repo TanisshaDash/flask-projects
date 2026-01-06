@@ -46,6 +46,38 @@ def generate_merged_crime_data():
     merged_df.to_csv("static/data/global_crime_data.csv", index=False)
     print("✅ Merged data saved to static/data/global_crime_data.csv")
 
+    import pandas as pd
+
+DATA_PATH = "static/data/cleaned_global_crime_data.csv"
+
+def get_crime_summary(country):
+    df = pd.read_csv(DATA_PATH)
+
+    df = df[df["country"] == country]
+
+    if df.empty:
+        return None
+
+    avg_rate = round(df["value"].mean(), 2)
+
+    df_sorted = df.sort_values("year")
+    trend = "increasing" if df_sorted["value"].iloc[-1] > df_sorted["value"].iloc[0] else "decreasing"
+
+    if avg_rate < 2:
+        risk = "Low"
+    elif avg_rate < 5:
+        risk = "Medium"
+    else:
+        risk = "High"
+
+    return {
+        "country": country,
+        "average_rate": avg_rate,
+        "trend": trend,
+        "risk_level": risk
+    }
+
+
 # Make sure to run this script again after making the change to generate the new CSV.
 if __name__ == "__main__":
     generate_merged_crime_data()

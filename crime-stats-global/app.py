@@ -1,12 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for,jsonify
 import pandas as pd
-import requests
 from urllib.parse import unquote 
 import json
 from io import StringIO
 from datetime import datetime
-import os
-
+import os , requests 
+from combine_crime_data import get_crime_summary
 app = Flask(__name__)
 
 DISPLAY_LABELS = {
@@ -69,7 +68,6 @@ def get_live_homicide(country_code):
 @app.route('/live')
 def live_stats():
     selected_country = request.args.get('country', 'IN').upper()
-    chart = get_live_homicide(selected_country)
 
     countries = {
         "IN": "India",
@@ -80,9 +78,18 @@ def live_stats():
         "JP": "Japan"
     }
 
+    chart = get_live_homicide(selected_country)
+
     timestamp = datetime.now().strftime("%d %B %Y, %I:%M %p")
-    return render_template("live_stats.html", chart=chart, countries=countries,
-                           selected_country=selected_country, timestamp=timestamp)
+
+    return render_template(
+        "live_stats.html",
+        chart=chart,
+        countries=countries,
+        selected_country=selected_country,
+        timestamp=timestamp
+    )
+
 
 @app.route('/')
 def index():
@@ -158,6 +165,58 @@ def country_stats(country):
         charts_json=chart_data,
         country=country_name
     )
+@app.route("/api/crime-summary", methods=["GET"])
+def crime_summary():
+    country = request.args.get("country")
+
+    if not country:
+        return jsonify({"error": "country parameter is required"}), 400
+
+    summary = get_crime_summary(country)
+
+    if not summary:
+        return jsonify({"error": "No data found for this country"}), 404
+
+    return jsonify(summary)
+
+
+NEWS_API_KEY = os.getenv("NEWS_API_KEY")
+if not NEWS_API_KEY:
+    raise RuntimeError("NEWS_API_KEY environment variable not set")
+
+@app.route('/api/hyderabad-crime-news')
+def hyderabad_crime_news():
+    url = "https://newsapi.org/v2/everything"
+
+    params = {
+        "q": "Hyderabad crime OR Hyderabad murder OR Hyderabad theft OR Hyderabad robbery",
+        "language": "en",
+        "sortBy": "publishedAt",
+        "pageSize": 10,
+        "apiKey": NEWS_API_KEY
+    }
+
+    response = requests.get(url, params=params)
+    data = response.json()
+
+    articles = []
+
+    if data.get("status") == "ok":
+        for a in data.get("articles", []):
+            articles.append({
+                "title": a["title"],
+                "source": a["source"]["name"],
+                "published_at": a["publishedAt"],
+                "url": a["url"],
+                "description": a["description"]
+            })
+
+    return jsonify({
+        "city": "Hyderabad",
+        "count": len(articles),
+        "articles": articles
+    })
+
 
 if __name__ == '__main__':
     app.run(debug=True)

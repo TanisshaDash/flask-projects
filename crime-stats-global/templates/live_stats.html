@@ -106,5 +106,47 @@
       }
     });
   </script>
-</body>
-</html>
+
+  <hr style="margin:40px 0; border-color:#333;">
+
+<h1>🚨 Live Crime News – Hyderabad</h1>
+<p style="text-align:center; color:#bbbbbb;">
+Near real-time crime-related updates from verified news sources.
+</p>
+
+<div id="news-container">Loading...</div>
+
+<script>
+fetch('/api/hyderabad-crime-news')
+  .then(res => res.json())
+  .then(data => {
+    const container = document.getElementById('news-container');
+    container.innerHTML = "";
+
+    if (!data.articles || data.articles.length === 0) {
+      container.innerHTML = "<p>No recent crime news found.</p>";
+      return;
+    }
+
+    data.articles.forEach(item => {
+      const div = document.createElement('div');
+      div.style.background = "#1f1f1f";
+      div.style.padding = "15px";
+      div.style.marginBottom = "15px";
+      div.style.borderRadius = "8px";
+      div.style.borderLeft = "4px solid #007bff";
+
+      div.innerHTML = `
+        <h3>${item.title}</h3>
+        <p>${item.description || ""}</p>
+        <small>${item.source} • ${new Date(item.published_at).toLocaleString()}</small><br>
+        <a href="${item.url}" target="_blank" style="color:#4da3ff;">Read full article</a>
+      `;
+      container.appendChild(div);
+    });
+  })
+  .catch(() => {
+    document.getElementById('news-container').innerHTML =
+      "<p>Error loading live data.</p>";
+  });
+</script>
