@@ -5,7 +5,10 @@
   <title>Global Crime Dashboard</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+
+
   <style>
+    
     body {
       margin: 0;
       font-family: 'Source Sans Pro', sans-serif;
@@ -16,12 +19,7 @@
       min-height: 100vh;
     }
 
-    /* World Map Header */
-    .world-map-header {
-      width: 100%;
-      height: 600px; /* Adjust as needed */
-      background: url('{{ url_for("static", filename="images/world_map.jpg") }}') center/cover no-repeat;
-    }
+
     
     /* Content Section */
     .content-row {
@@ -36,8 +34,9 @@
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
+      
     }
-
+  
     .main-right {
       width: 50vw;
       max-width: 700px;
@@ -153,12 +152,24 @@
 </head>
 <body>
 
-  <!-- Full-width World Map Header -->
-  <div class="world-map-header"></div>
-  <div class="hero-title">
-  <h1>Global Crime Statistics</h1>
+<div class="form-box">
+        <form onsubmit="handleCountrySubmit(event)">
+          <label for="country" class="visually-hidden">Choose a country</label>
+          <select id="country" required>
+            <option value="">Select a country</option>
+            {% for country in countries %}
+              <option value="{{ country }}">{{ country }}</option>
+            {% endfor %}
+          </select>
+          <div class="world-map-header">
+  <div class="map-overlay">
+    <h1 class="map-title">Global Crime Statistics</h1>
+    <a href="/live" class="map-live-btn">🧬 View Live Homicide Trends</a>
+  </div>
 </div>
-
+        </form>
+      </div>
+    </div>
   <!-- Main Content Row -->
   <div class="content-row">
     <div class="main-left">
@@ -179,19 +190,7 @@
 
       <p class="description">Begin your exploration below 👇</p>
 
-      <div class="form-box">
-        <form onsubmit="handleCountrySubmit(event)">
-          <label for="country" class="visually-hidden">Choose a country</label>
-          <select id="country" required>
-            <option value="">Select a country</option>
-            {% for country in countries %}
-              <option value="{{ country }}">{{ country }}</option>
-            {% endfor %}
-          </select>
-          <div class="button-group">
-  <a href="/stats" class="secondary-btn">📊 Global Stats</a>
-  <a href="/live" class="view-live-btn">🧬 View Live Homicide Trends</a>
-</div>
+      
         </form>
       </div>
     </div>
