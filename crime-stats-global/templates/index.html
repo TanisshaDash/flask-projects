@@ -188,11 +188,10 @@
               <option value="{{ country }}">{{ country }}</option>
             {% endfor %}
           </select>
-          <div class="button-row">
-            <button type="submit">📊 Show Stats</button>
-            <a href="{{ url_for('stats') }}" class="secondary-btn">🌍 View Global Stats</a>
-            <a href="{{ url_for('live_stats') }}" class="secondary-btn" style="background:#28a745;">📡 View Live Homicide Trends</a>
-          </div>
+          <div class="button-group">
+  <a href="/stats" class="secondary-btn">📊 Global Stats</a>
+  <a href="/live" class="view-live-btn">🧬 View Live Homicide Trends</a>
+</div>
         </form>
       </div>
     </div>
