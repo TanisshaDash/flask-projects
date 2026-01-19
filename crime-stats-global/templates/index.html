@@ -4,421 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Global Crime Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Source Sans Pro', sans-serif;
-      background: #010d2e;
-      color: #f1f1f1;
-      min-height: 100vh;
-    }
-
-    /* Map Header Section */
-    .world-map-header {
-      position: relative;
-      width: 100%;
-      height: 400px;
-      background: linear-gradient(135deg, #0a1628 0%, #1a2744 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-bottom: 3px solid #3399ff;
-    }
-
-    .map-overlay {
-      text-align: center;
-      z-index: 10;
-    }
-
-    .map-title {
-      font-size: 3rem;
-      font-weight: 800;
-      color: #3399ff;
-      margin-bottom: 20px;
-      text-shadow: 0 0 20px rgba(51, 153, 255, 0.5);
-    }
-
-    .map-live-btn {
-      display: inline-block;
-      background: #3399ff;
-      color: white;
-      padding: 12px 24px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 1.1rem;
-      transition: all 0.3s ease;
-    }
-
-    .map-live-btn:hover {
-      background: #66ccff;
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(51, 153, 255, 0.4);
-    }
-
-    /* Form Section - Below Map */
-    .form-section {
-      background: #0a1628;
-      padding: 40px;
-      text-align: center;
-      border-bottom: 1px solid #1a2744;
-    }
-
-    .form-box {
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .form-box label {
-      display: block;
-      font-size: 1.3rem;
-      color: #3399ff;
-      margin-bottom: 15px;
-      font-weight: 600;
-    }
-
-    .form-box select {
-      width: 100%;
-      padding: 15px;
-      font-size: 1.1rem;
-      background: #1a2744;
-      color: #f1f1f1;
-      border: 2px solid #3399ff;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .form-box select:hover {
-      background: #243552;
-      border-color: #66ccff;
-    }
-
-    .form-box select:focus {
-      outline: none;
-      border-color: #66ccff;
-      box-shadow: 0 0 15px rgba(51, 153, 255, 0.3);
-    }
-
-    /* Live Homicide Section */
-    .live-homicide-section {
-      background: #1a1a1a;
-      padding: 60px 40px;
-      border-bottom: 1px solid #2a2a2a;
-    }
-
-    .live-homicide-header {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-
-    .live-homicide-header h2 {
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: #ffffff;
-      margin-bottom: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 15px;
-    }
-
-    .pulse-dot {
-      width: 20px;
-      height: 20px;
-      background: #ff6b6b;
-      border-radius: 50%;
-      animation: pulse 2s ease-in-out infinite;
-      box-shadow: 0 0 15px rgba(255, 107, 107, 0.7);
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.7; transform: scale(1.1); }
-    }
-
-    .live-homicide-header p {
-      font-size: 1.2rem;
-      color: #aaa;
-    }
-
-    .chart-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      background: #2a2a2a;
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-    }
-
-    .chart-info {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 30px;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
-
-    .chart-info .latest-stat {
-      font-size: 1.3rem;
-      color: #fff;
-    }
-
-    .chart-info .latest-stat span {
-      color: #ff6b6b;
-      font-weight: 700;
-      font-size: 1.5rem;
-    }
-
-    .chart-legend {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 1rem;
-      color: #aaa;
-    }
-
-    .legend-box {
-      width: 30px;
-      height: 15px;
-      background: #ff6b6b;
-      border-radius: 3px;
-    }
-
-    /* Latest News Section */
-    .news-section {
-      background: #1a1a1a;
-      padding: 60px 40px;
-    }
-
-    .news-section h2 {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #ffffff;
-      margin-bottom: 30px;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .news-icon {
-      font-size: 1.8rem;
-    }
-
-    .news-list {
-      list-style: none;
-      max-width: 1200px;
-    }
-
-    .news-list li {
-      padding: 18px 0;
-      border-bottom: 1px solid #333;
-      transition: all 0.3s ease;
-    }
-
-    .news-list li:hover {
-      padding-left: 15px;
-      border-left: 3px solid #3399ff;
-    }
-
-    .news-list a {
-      color: #66ccff;
-      text-decoration: none;
-      font-size: 1.05rem;
-      font-weight: 500;
-      transition: color 0.3s ease;
-    }
-
-    .news-list a:hover {
-      color: #3399ff;
-    }
-
-    .news-source {
-      color: #888;
-      font-size: 0.9rem;
-      margin-left: 10px;
-    }
-
-    /* Main Content Section */
-    .content-row {
-      display: flex;
-      flex-direction: row;
-    }
-
-    .main-left {
-      flex: 1;
-      padding: 60px 40px;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-    }
-
-    .main-right {
-      width: 50vw;
-      max-width: 700px;
-      background: #0d1b2a;
-      padding: 60px 40px;
-      overflow-y: auto;
-      border-left: 1px solid #1a2744;
-    }
-
-    .page-title {
-      font-size: 3rem;
-      font-weight: 800;
-      color: #3399ff;
-      margin-bottom: 15px;
-    }
-
-    .subheading {
-      font-size: 1.4rem;
-      color: #66ccff;
-      margin-bottom: 25px;
-    }
-
-    .description {
-      font-size: 1.15rem;
-      line-height: 1.7;
-      color: #ccc;
-      max-width: 650px;
-      margin-bottom: 25px;
-    }
-
-    .highlight {
-      color: #66ccff;
-      font-weight: 700;
-    }
-
-    .city-tagline {
-      margin: 40px 0;
-      padding: 25px;
-      background: #0d1b2a;
-      border-left: 4px solid #3399ff;
-      border-radius: 6px;
-      max-width: 650px;
-    }
-
-    .city-tagline h2 {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: #ffffff;
-      margin-bottom: 12px;
-    }
-
-    .city-tagline p {
-      color: #ccc;
-      font-size: 1.05rem;
-      line-height: 1.6;
-    }
-
-    .city-tagline a {
-      color: #66ccff;
-      text-decoration: none;
-      font-weight: 600;
-      border-bottom: 2px solid transparent;
-      transition: border-color 0.3s ease;
-    }
-
-    .city-tagline a:hover {
-      border-bottom-color: #66ccff;
-    }
-
-    /* Top 20 Section */
-    .top10-section h2 {
-      font-size: 1.8rem;
-      margin-bottom: 25px;
-      color: #3399ff;
-      font-weight: 700;
-    }
-
-    .leaderboard {
-      list-style: none;
-    }
-
-    .leaderboard li {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #1a2744;
-      padding: 16px 20px;
-      margin-bottom: 12px;
-      border-radius: 8px;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      border-left: 3px solid transparent;
-    }
-
-    .leaderboard li:hover {
-      background: #243552;
-      border-left-color: #3399ff;
-      transform: translateX(5px);
-    }
-
-    .crime-count {
-      color: #66ccff;
-      font-size: 1.05rem;
-    }
-
-    /* Responsive Design */
-    @media (max-width: 1024px) {
-      .content-row {
-        flex-direction: column;
-      }
-
-      .main-right {
-        width: 100%;
-        max-width: 100%;
-        border-left: none;
-        border-top: 1px solid #1a2744;
-      }
-
-      .map-title {
-        font-size: 2.2rem;
-      }
-
-      .page-title {
-        font-size: 2.2rem;
-      }
-
-      .chart-info {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .world-map-header {
-        height: 300px;
-      }
-
-      .map-title {
-        font-size: 1.8rem;
-      }
-
-      .main-left,
-      .main-right,
-      .live-homicide-section,
-      .news-section,
-      .chart-container {
-        padding: 40px 25px;
-      }
-
-      .page-title {
-        font-size: 1.8rem;
-      }
-
-      .live-homicide-header h2 {
-        font-size: 2rem;
-      }
-    }
-  </style>
 </head>
 <body>
 
@@ -426,7 +14,7 @@
   <div class="world-map-header">
     <div class="map-overlay">
       <h1 class="map-title">Global Crime Statistics</h1>
-      <a href="#live-trends" class="map-live-btn">🧬 View Live Homicide Trends</a>
+      <a href="/live" class="map-live-btn">🧬 View Live Homicide Trends</a>
     </div>
   </div>
 
@@ -437,16 +25,9 @@
         <label for="country">Choose a country</label>
         <select id="country" required>
           <option value="">Select a country</option>
-          <option value="United States">United States</option>
-          <option value="United Kingdom">United Kingdom</option>
-          <option value="Canada">Canada</option>
-          <option value="Australia">Australia</option>
-          <option value="Germany">Germany</option>
-          <option value="France">France</option>
-          <option value="Japan">Japan</option>
-          <option value="Brazil">Brazil</option>
-          <option value="India">India</option>
-          <option value="China">China</option>
+          {% for country in countries %}
+            <option value="{{ country }}">{{ country }}</option>
+          {% endfor %}
         </select>
       </form>
     </div>
@@ -465,7 +46,7 @@
     <div class="chart-container">
       <div class="chart-info">
         <div class="latest-stat">
-          Latest: <span>2.8 per 100k</span> (2022)
+          Latest: <span id="latest-rate">Loading...</span>
         </div>
         <div class="chart-legend">
           <div class="legend-box"></div>
@@ -482,47 +63,9 @@
       <span class="news-icon">📰</span>
       Latest Telangana Crime News
     </h2>
-    <ul class="news-list">
-      <li>
-        <a href="#">Hyderabad police launch C-Wing to profile cybercrime FIRs from home</a>
-        <span class="news-source">(The Hindu)</span>
-      </li>
-      <li>
-        <a href="#">Hyderabad Cyber Crime Police explains why bank accounts are frozen and how to stay safe</a>
-        <span class="news-source">(Telangana Today)</span>
-      </li>
-      <li>
-        <a href="#">Hyderabad Cyber Crime Unit Arrests Mastermind of iRomins and Bandam Phoxy Racket</a>
-        <span class="news-source">(News On AIR)</span>
-      </li>
-      <li>
-        <a href="#">Overall crime in Telangana down 2.53 pc in 2025: Police annual report</a>
-        <span class="news-source">(Siasat.com)</span>
-      </li>
-      <li>
-        <a href="#">Telangana Police to Open History Sheets to Contain Cybercious Activities</a>
-        <span class="news-source">(Deccan Chronicle)</span>
-      </li>
-      <li>
-        <a href="#">Hyderabad Police Plans AI Integration for Investigations</a>
-        <span class="news-source">(MediaNama)</span>
-      </li>
-      <li>
-        <a href="#">Overall crime fell by 25.33% in Telangana in 2025</a>
-        <span class="news-source">(The Hindu)</span>
-      </li>
-      <li>
-        <a href="#">Hyderabad sees overall crime rate drop by 15% in 2025, offences against women, children rise</a>
-        <span class="news-source">(The Hindu)</span>
-      </li>
-      <li>
-        <a href="#">Cyberabad police portal resumes service after over a fortnight; Rachakonda still offline</a>
-        <span class="news-source">(The Hindu)</span>
-      </li>
-      <li>
-        <a href="#">Woman targated follows up by AI FRs</a>
-        <span class="news-source">(The Hindu)</span>
-      </li>
+    <div id="news-loading" class="news-loading">Loading latest news...</div>
+    <ul class="news-list" id="news-list">
+      <!-- News will be populated by JavaScript -->
     </ul>
   </div>
 
@@ -530,6 +73,9 @@
   <div class="content-row">
     <!-- Left Content -->
     <div class="main-left">
+      <!-- Theme Toggle Button -->
+      <button class="theme-toggle" onclick="toggleTheme()">🌓 Toggle Theme</button>
+      
       <h1 class="page-title">Crime Around the World</h1>
       <p class="subheading">Opening up global crime data</p>
 
@@ -541,7 +87,7 @@
         <h2>Know your country. Track different kinds of crimes.</h2>
         <p>
           Explore trends across the globe. Choose from 
-          <a href="/stats">crime categories</a> to dive deeper into the data.
+          <a href="{{ url_for('stats') }}">crime categories</a> to dive deeper into the data.
         </p>
       </div>
 
@@ -553,169 +99,17 @@
       <div class="top10-section">
         <h2>Top 20 Countries by Total Crime (2019–2024)</h2>
         <ul class="leaderboard">
-          <li>
-            <span>United States</span>
-            <span class="crime-count">15,234,567 crimes</span>
-          </li>
-          <li>
-            <span>Brazil</span>
-            <span class="crime-count">8,456,234 crimes</span>
-          </li>
-          <li>
-            <span>India</span>
-            <span class="crime-count">7,890,123 crimes</span>
-          </li>
-          <li>
-            <span>Mexico</span>
-            <span class="crime-count">6,234,567 crimes</span>
-          </li>
-          <li>
-            <span>South Africa</span>
-            <span class="crime-count">5,678,901 crimes</span>
-          </li>
-          <li>
-            <span>Russia</span>
-            <span class="crime-count">4,567,890 crimes</span>
-          </li>
-          <li>
-            <span>Germany</span>
-            <span class="crime-count">3,456,789 crimes</span>
-          </li>
-          <li>
-            <span>United Kingdom</span>
-            <span class="crime-count">3,234,567 crimes</span>
-          </li>
-          <li>
-            <span>France</span>
-            <span class="crime-count">2,890,123 crimes</span>
-          </li>
-          <li>
-            <span>Italy</span>
-            <span class="crime-count">2,456,789 crimes</span>
-          </li>
-          <li>
-            <span>Colombia</span>
-            <span class="crime-count">2,123,456 crimes</span>
-          </li>
-          <li>
-            <span>Argentina</span>
-            <span class="crime-count">1,890,234 crimes</span>
-          </li>
-          <li>
-            <span>Spain</span>
-            <span class="crime-count">1,678,901 crimes</span>
-          </li>
-          <li>
-            <span>Canada</span>
-            <span class="crime-count">1,456,789 crimes</span>
-          </li>
-          <li>
-            <span>Australia</span>
-            <span class="crime-count">1,234,567 crimes</span>
-          </li>
-          <li>
-            <span>Poland</span>
-            <span class="crime-count">1,123,456 crimes</span>
-          </li>
-          <li>
-            <span>Ukraine</span>
-            <span class="crime-count">987,654 crimes</span>
-          </li>
-          <li>
-            <span>Turkey</span>
-            <span class="crime-count">876,543 crimes</span>
-          </li>
-          <li>
-            <span>Netherlands</span>
-            <span class="crime-count">765,432 crimes</span>
-          </li>
-          <li>
-            <span>Sweden</span>
-            <span class="crime-count">654,321 crimes</span>
-          </li>
+          {% for item in top_10 %}
+            <li>
+              <span>{{ item['Country'] }}</span>
+              <span class="crime-count">{{ "{:,}".format(item['total_crime']|int) }} crimes</span>
+            </li>
+          {% endfor %}
         </ul>
       </div>
     </div>
   </div>
 
-  <script>
-    function handleCountrySubmit(event) {
-      event.preventDefault();
-      const country = document.getElementById('country').value;
-      if (country) {
-        window.location.href = '/country/' + encodeURIComponent(country);
-      }
-    }
-
-    // Auto-submit on selection change
-    document.getElementById('country').addEventListener('change', function(e) {
-      if (this.value) {
-        handleCountrySubmit(e);
-      }
-    });
-
-    // Chart.js - Homicide Rate Chart
-    const ctx = document.getElementById('homicideChart').getContext('2d');
-    const homicideChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['2000', '2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022'],
-        datasets: [{
-          label: 'Homicides per 100k',
-          data: [4.5, 4.3, 4.2, 3.95, 4.1, 3.9, 3.85, 3.8, 3.75, 3.7, 3.65, 3.75, 3.8, 3.5, 3.6, 3.35, 3.15, 3.05, 3.0, 2.95, 2.9, 2.85, 2.8],
-          borderColor: '#ff6b6b',
-          backgroundColor: 'rgba(255, 107, 107, 0.1)',
-          fill: true,
-          tension: 0.4,
-          pointRadius: 4,
-          pointHoverRadius: 6,
-          pointBackgroundColor: '#ff6b6b',
-          borderWidth: 2
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: true,
-        aspectRatio: 2.5,
-        plugins: {
-          legend: {
-            display: false
-          },
-          tooltip: {
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-            padding: 12,
-            titleColor: '#fff',
-            bodyColor: '#fff',
-            callbacks: {
-              label: function(context) {
-                return context.parsed.y + ' per 100k';
-              }
-            }
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: false,
-            min: 2.5,
-            max: 5,
-            grid: {
-              color: 'rgba(255, 255, 255, 0.1)'
-            },
-            ticks: {
-              color: '#aaa'
-            }
-          },
-          x: {
-            grid: {
-              color: 'rgba(255, 255, 255, 0.05)'
-            },
-            ticks: {
-              color: '#aaa'
-            }
-          }
-        }
-      }
-    });
-  </script>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

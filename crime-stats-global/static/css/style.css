@@ -1,87 +1,493 @@
-.world-map-header {
-  position: relative;
-  width: 100%;
-  height: 600px;
-  background: url('../images/world_map.jpg') center/cover no-repeat;
-}
-
-/* Center content on map */
-.map-overlay {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-}
-
-/* Title */
-.map-title {
-  font-size: 3.5rem;
-  font-weight: 800;
-  color: #ffffff;
-  margin-bottom: 18px;
-  text-shadow: 3px 3px 12px rgba(0,0,0,0.8);
-}
-
-/* Button below title */
-.map-live-btn {
-  display: inline-block;
-  padding: 12px 22px;
-  font-size: 1.05rem;
-  font-weight: 600;
-  border-radius: 6px;
-  background: #3399ff;
-  color: #fff;
-  text-decoration: none;
-}
-
-.map-live-btn:hover {
-  opacity: 0.9;
-}
-
+/* CSS Variables for Theming */
 :root {
   --bg-color: #010d2e;
   --text-color: #f1f1f1;
-  --card-bg: #1f1f1f;
-  --accent: #3399ff;
-  --button-bg: #3399ff;
+  --card-bg: #0d1b2a;
+  --card-hover-bg: #1a2744;
+  --accent-primary: #3399ff;
+  --accent-secondary: #66ccff;
+  --section-bg: #0a1628;
+  --border-color: #1a2744;
+  --news-bg: #1a1a1a;
+  --chart-bg: #2a2a2a;
+  --leaderboard-bg: #1a2744;
+  --leaderboard-hover-bg: #243552;
 }
 
 body.light-theme {
   --bg-color: #f5f5f5;
   --text-color: #111;
   --card-bg: #ffffff;
-  --accent: #0066cc;
-  --button-bg: #0066cc;
+  --card-hover-bg: #f0f0f0;
+  --accent-primary: #0066cc;
+  --accent-secondary: #0080ff;
+  --section-bg: #e8e8e8;
+  --border-color: #ddd;
+  --news-bg: #fafafa;
+  --chart-bg: #ffffff;
+  --leaderboard-bg: #f0f0f0;
+  --leaderboard-hover-bg: #e0e0e0;
+}
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
+  font-family: 'Source Sans Pro', sans-serif;
   background: var(--bg-color);
   color: var(--text-color);
+  min-height: 100vh;
   transition: background 0.3s ease, color 0.3s ease;
 }
 
-.city-tagline,
-.news-section,
-.main-right {
+/* Map Header Section */
+.world-map-header {
+  position: relative;
+  width: 100%;
+  height: 600px;
+  background: url('../images/world_map.jpg') center/cover no-repeat;
+  background-color: #0a1628;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 3px solid var(--accent-primary);
+}
+
+.map-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 10;
+}
+
+.map-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 18px;
+  text-shadow: 3px 3px 12px rgba(0, 0, 0, 0.8);
+}
+
+.map-live-btn {
+  display: inline-block;
+  background: var(--accent-primary);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+}
+
+.map-live-btn:hover {
+  background: var(--accent-secondary);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(51, 153, 255, 0.4);
+}
+
+/* Form Section - Below Map */
+.form-section {
+  background: var(--section-bg);
+  padding: 40px;
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+  transition: background 0.3s ease;
+}
+
+.form-box {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.form-box label {
+  display: block;
+  font-size: 1.3rem;
+  color: var(--accent-primary);
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.form-box select {
+  width: 100%;
+  padding: 15px;
+  font-size: 1.1rem;
   background: var(--card-bg);
+  color: var(--text-color);
+  border: 2px solid var(--accent-primary);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.page-title {
-  color: var(--accent);
+.form-box select:hover {
+  background: var(--card-hover-bg);
+  border-color: var(--accent-secondary);
 }
 
-button,
-.secondary-btn {
-  background: var(--button-bg);
-  color: #fff;
+.form-box select:focus {
+  outline: none;
+  border-color: var(--accent-secondary);
+  box-shadow: 0 0 15px rgba(51, 153, 255, 0.3);
 }
+
+/* Live Homicide Section */
+.live-homicide-section {
+  background: var(--news-bg);
+  padding: 60px 40px;
+  border-bottom: 1px solid var(--border-color);
+  transition: background 0.3s ease;
+}
+
+.live-homicide-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.live-homicide-header h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+.pulse-dot {
+  width: 20px;
+  height: 20px;
+  background: #ff6b6b;
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+  box-shadow: 0 0 15px rgba(255, 107, 107, 0.7);
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    opacity: 1; 
+    transform: scale(1); 
+  }
+  50% { 
+    opacity: 0.7; 
+    transform: scale(1.1); 
+  }
+}
+
+.live-homicide-header p {
+  font-size: 1.2rem;
+  color: #aaa;
+}
+
+.chart-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: var(--chart-bg);
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  transition: background 0.3s ease;
+}
+
+.chart-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.chart-info .latest-stat {
+  font-size: 1.3rem;
+  color: var(--text-color);
+}
+
+.chart-info .latest-stat span {
+  color: #ff6b6b;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.chart-legend {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  color: #aaa;
+}
+
+.legend-box {
+  width: 30px;
+  height: 15px;
+  background: #ff6b6b;
+  border-radius: 3px;
+}
+
+/* Latest News Section */
+.news-section {
+  background: var(--news-bg);
+  padding: 60px 40px;
+  transition: background 0.3s ease;
+}
+
+.news-section h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.news-icon {
+  font-size: 1.8rem;
+}
+
+.news-loading {
+  text-align: center;
+  padding: 30px;
+  color: #aaa;
+  font-size: 1.1rem;
+}
+
+.news-list {
+  list-style: none;
+  max-width: 1200px;
+}
+
+.news-list li {
+  padding: 18px 0;
+  border-bottom: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.news-list li:hover {
+  padding-left: 15px;
+  border-left: 3px solid var(--accent-primary);
+}
+
+.news-list a {
+  color: var(--accent-secondary);
+  text-decoration: none;
+  font-size: 1.05rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.news-list a:hover {
+  color: var(--accent-primary);
+}
+
+.news-source {
+  color: #888;
+  font-size: 0.9rem;
+  margin-left: 10px;
+}
+
+/* Main Content Section */
+.content-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.main-left {
+  flex: 1;
+  padding: 60px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.main-right {
+  width: 50vw;
+  max-width: 700px;
+  background: var(--card-bg);
+  padding: 60px 40px;
+  overflow-y: auto;
+  border-left: 1px solid var(--border-color);
+  transition: background 0.3s ease;
+}
+
+/* Theme Toggle Button */
 .theme-toggle {
   align-self: flex-end;
   margin-bottom: 20px;
-  padding: 8px 14px;
-  font-size: 0.9rem;
-  border-radius: 6px;
-  border: none;
+  padding: 10px 18px;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  border: 2px solid var(--accent-primary);
+  background: var(--card-bg);
+  color: var(--text-color);
   cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+  background: var(--accent-primary);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.page-title {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--accent-primary);
+  margin-bottom: 15px;
+}
+
+.subheading {
+  font-size: 1.4rem;
+  color: var(--accent-secondary);
+  margin-bottom: 25px;
+}
+
+.description {
+  font-size: 1.15rem;
+  line-height: 1.7;
+  color: var(--text-color);
+  max-width: 650px;
+  margin-bottom: 25px;
+}
+
+.highlight {
+  color: var(--accent-secondary);
+  font-weight: 700;
+}
+
+.city-tagline {
+  margin: 40px 0;
+  padding: 25px;
+  background: var(--card-bg);
+  border-left: 4px solid var(--accent-primary);
+  border-radius: 6px;
+  max-width: 650px;
+  transition: background 0.3s ease;
+}
+
+.city-tagline h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 12px;
+}
+
+.city-tagline p {
+  color: var(--text-color);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.city-tagline a {
+  color: var(--accent-secondary);
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.3s ease;
+}
+
+.city-tagline a:hover {
+  border-bottom-color: var(--accent-secondary);
+}
+
+/* Top 20 Section */
+.top10-section h2 {
+  font-size: 1.8rem;
+  margin-bottom: 25px;
+  color: var(--accent-primary);
+  font-weight: 700;
+}
+
+.leaderboard {
+  list-style: none;
+}
+
+.leaderboard li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--leaderboard-bg);
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+}
+
+.leaderboard li:hover {
+  background: var(--leaderboard-hover-bg);
+  border-left-color: var(--accent-primary);
+  transform: translateX(5px);
+}
+
+.crime-count {
+  color: var(--accent-secondary);
+  font-size: 1.05rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .content-row {
+    flex-direction: column;
+  }
+
+  .main-right {
+    width: 100%;
+    max-width: 100%;
+    border-left: none;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .map-title {
+    font-size: 2.5rem;
+  }
+
+  .page-title {
+    font-size: 2.2rem;
+  }
+
+  .chart-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .world-map-header {
+    height: 400px;
+  }
+
+  .map-title {
+    font-size: 2rem;
+  }
+
+  .main-left,
+  .main-right,
+  .live-homicide-section,
+  .news-section,
+  .chart-container {
+    padding: 40px 25px;
+  }
+
+  .page-title {
+    font-size: 1.8rem;
+  }
+
+  .live-homicide-header h2 {
+    font-size: 2rem;
+  }
+
+  .theme-toggle {
+    align-self: center;
+  }
 }
