@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Global Crime Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     * {
       margin: 0;
@@ -106,11 +107,150 @@
       box-shadow: 0 0 15px rgba(51, 153, 255, 0.3);
     }
 
+    /* Live Homicide Section */
+    .live-homicide-section {
+      background: #1a1a1a;
+      padding: 60px 40px;
+      border-bottom: 1px solid #2a2a2a;
+    }
+
+    .live-homicide-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .live-homicide-header h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .pulse-dot {
+      width: 20px;
+      height: 20px;
+      background: #ff6b6b;
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+      box-shadow: 0 0 15px rgba(255, 107, 107, 0.7);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.1); }
+    }
+
+    .live-homicide-header p {
+      font-size: 1.2rem;
+      color: #aaa;
+    }
+
+    .chart-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: #2a2a2a;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .chart-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .chart-info .latest-stat {
+      font-size: 1.3rem;
+      color: #fff;
+    }
+
+    .chart-info .latest-stat span {
+      color: #ff6b6b;
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+
+    .chart-legend {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1rem;
+      color: #aaa;
+    }
+
+    .legend-box {
+      width: 30px;
+      height: 15px;
+      background: #ff6b6b;
+      border-radius: 3px;
+    }
+
+    /* Latest News Section */
+    .news-section {
+      background: #1a1a1a;
+      padding: 60px 40px;
+    }
+
+    .news-section h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .news-icon {
+      font-size: 1.8rem;
+    }
+
+    .news-list {
+      list-style: none;
+      max-width: 1200px;
+    }
+
+    .news-list li {
+      padding: 18px 0;
+      border-bottom: 1px solid #333;
+      transition: all 0.3s ease;
+    }
+
+    .news-list li:hover {
+      padding-left: 15px;
+      border-left: 3px solid #3399ff;
+    }
+
+    .news-list a {
+      color: #66ccff;
+      text-decoration: none;
+      font-size: 1.05rem;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .news-list a:hover {
+      color: #3399ff;
+    }
+
+    .news-source {
+      color: #888;
+      font-size: 0.9rem;
+      margin-left: 10px;
+    }
+
     /* Main Content Section */
     .content-row {
       display: flex;
       flex-direction: row;
-      min-height: calc(100vh - 400px);
     }
 
     .main-left {
@@ -191,10 +331,6 @@
     }
 
     /* Top 20 Section */
-    .top10-section {
-      margin-top: 0;
-    }
-
     .top10-section h2 {
       font-size: 1.8rem;
       margin-bottom: 25px;
@@ -250,6 +386,11 @@
       .page-title {
         font-size: 2.2rem;
       }
+
+      .chart-info {
+        flex-direction: column;
+        align-items: flex-start;
+      }
     }
 
     @media (max-width: 768px) {
@@ -262,12 +403,19 @@
       }
 
       .main-left,
-      .main-right {
+      .main-right,
+      .live-homicide-section,
+      .news-section,
+      .chart-container {
         padding: 40px 25px;
       }
 
       .page-title {
         font-size: 1.8rem;
+      }
+
+      .live-homicide-header h2 {
+        font-size: 2rem;
       }
     }
   </style>
@@ -278,7 +426,7 @@
   <div class="world-map-header">
     <div class="map-overlay">
       <h1 class="map-title">Global Crime Statistics</h1>
-      <a href="/live" class="map-live-btn">🧬 View Live Homicide Trends</a>
+      <a href="#live-trends" class="map-live-btn">🧬 View Live Homicide Trends</a>
     </div>
   </div>
 
@@ -299,10 +447,83 @@
           <option value="Brazil">Brazil</option>
           <option value="India">India</option>
           <option value="China">China</option>
-          <!-- Add more countries as needed -->
         </select>
       </form>
     </div>
+  </div>
+
+  <!-- Live Homicide Rates Section -->
+  <div class="live-homicide-section" id="live-trends">
+    <div class="live-homicide-header">
+      <h2>
+        <span class="pulse-dot"></span>
+        Live Homicide Rates
+      </h2>
+      <p>Real-time data from World Bank API (2000-2024)</p>
+    </div>
+
+    <div class="chart-container">
+      <div class="chart-info">
+        <div class="latest-stat">
+          Latest: <span>2.8 per 100k</span> (2022)
+        </div>
+        <div class="chart-legend">
+          <div class="legend-box"></div>
+          Homicides per 100k
+        </div>
+      </div>
+      <canvas id="homicideChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Latest Telangana Crime News Section -->
+  <div class="news-section">
+    <h2>
+      <span class="news-icon">📰</span>
+      Latest Telangana Crime News
+    </h2>
+    <ul class="news-list">
+      <li>
+        <a href="#">Hyderabad police launch C-Wing to profile cybercrime FIRs from home</a>
+        <span class="news-source">(The Hindu)</span>
+      </li>
+      <li>
+        <a href="#">Hyderabad Cyber Crime Police explains why bank accounts are frozen and how to stay safe</a>
+        <span class="news-source">(Telangana Today)</span>
+      </li>
+      <li>
+        <a href="#">Hyderabad Cyber Crime Unit Arrests Mastermind of iRomins and Bandam Phoxy Racket</a>
+        <span class="news-source">(News On AIR)</span>
+      </li>
+      <li>
+        <a href="#">Overall crime in Telangana down 2.53 pc in 2025: Police annual report</a>
+        <span class="news-source">(Siasat.com)</span>
+      </li>
+      <li>
+        <a href="#">Telangana Police to Open History Sheets to Contain Cybercious Activities</a>
+        <span class="news-source">(Deccan Chronicle)</span>
+      </li>
+      <li>
+        <a href="#">Hyderabad Police Plans AI Integration for Investigations</a>
+        <span class="news-source">(MediaNama)</span>
+      </li>
+      <li>
+        <a href="#">Overall crime fell by 25.33% in Telangana in 2025</a>
+        <span class="news-source">(The Hindu)</span>
+      </li>
+      <li>
+        <a href="#">Hyderabad sees overall crime rate drop by 15% in 2025, offences against women, children rise</a>
+        <span class="news-source">(The Hindu)</span>
+      </li>
+      <li>
+        <a href="#">Cyberabad police portal resumes service after over a fortnight; Rachakonda still offline</a>
+        <span class="news-source">(The Hindu)</span>
+      </li>
+      <li>
+        <a href="#">Woman targated follows up by AI FRs</a>
+        <span class="news-source">(The Hindu)</span>
+      </li>
+    </ul>
   </div>
 
   <!-- Main Content Row -->
@@ -430,6 +651,69 @@
     document.getElementById('country').addEventListener('change', function(e) {
       if (this.value) {
         handleCountrySubmit(e);
+      }
+    });
+
+    // Chart.js - Homicide Rate Chart
+    const ctx = document.getElementById('homicideChart').getContext('2d');
+    const homicideChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['2000', '2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022'],
+        datasets: [{
+          label: 'Homicides per 100k',
+          data: [4.5, 4.3, 4.2, 3.95, 4.1, 3.9, 3.85, 3.8, 3.75, 3.7, 3.65, 3.75, 3.8, 3.5, 3.6, 3.35, 3.15, 3.05, 3.0, 2.95, 2.9, 2.85, 2.8],
+          borderColor: '#ff6b6b',
+          backgroundColor: 'rgba(255, 107, 107, 0.1)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          pointBackgroundColor: '#ff6b6b',
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 2.5,
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            padding: 12,
+            titleColor: '#fff',
+            bodyColor: '#fff',
+            callbacks: {
+              label: function(context) {
+                return context.parsed.y + ' per 100k';
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: false,
+            min: 2.5,
+            max: 5,
+            grid: {
+              color: 'rgba(255, 255, 255, 0.1)'
+            },
+            ticks: {
+              color: '#aaa'
+            }
+          },
+          x: {
+            grid: {
+              color: 'rgba(255, 255, 255, 0.05)'
+            },
+            ticks: {
+              color: '#aaa'
+            }
+          }
+        }
       }
     });
   </script>
